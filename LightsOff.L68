@@ -1,0 +1,75 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 3/31/2026 8:27:19 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :
+00000000                             3  * Written by :
+00000000                             4  * Date       :
+00000000                             5  * Description:
+00000000                             6  *-----------------------------------------------------------
+00001000                             7      ORG    $1000
+00001000                             8  START:                  ; first instruction of program
+00001000                             9  
+00001000                            10  * Put program code here
+00001000                            11  
+00001000                            12      ; Display "Enter an input: "
+00001000  43F9 00008000             13      LEA     MESSAGE, A1
+00001006  103C 000D                 14      MOVE.B  #13, D0
+0000100A  4E4F                      15      TRAP    #15
+0000100C                            16      
+0000100C                            17      ; Input number into D1
+0000100C  103C 0004                 18      MOVE.B  #4, D0
+00001010  4E4F                      19      TRAP    #15
+00001012                            20      
+00001012                            21      
+00001012                            22      ; Is inputted number 1?
+00001012  0C01 0001                 23      CMPI.B  #1,D1
+00001016  6700 000E                 24      BEQ     F_ONE
+0000101A                            25      
+0000101A                            26      ; Is inputted number 2?
+0000101A  0C01 0002                 27      CMPI.B  #2,D1
+0000101E  6700 0014                 28      BEQ     F_TWO
+00001022                            29      
+00001022                            30      ; End the Program
+00001022  6000 7010                 31      BRA     ENDOFPROG
+00001026                            32      
+00001026                            33      
+00001026                            34  F_ONE:
+00001026  43F9 00008011             35      LEA     M_ONE, A1
+0000102C  103C 000D                 36      MOVE.B  #13, D0
+00001030  4E4F                      37      TRAP    #15
+00001032  4E75                      38      RTS
+00001034                            39     
+00001034                            40  F_TWO:
+00001034  43F9 00008020             41      LEA     M_TWO, A1
+0000103A  103C 000D                 42      MOVE.B  #13, D0
+0000103E  4E4F                      43      TRAP    #15
+00001040  4E75                      44      RTS
+00001042                            45  
+00001042                            46  
+00008000                            47      ORG $8000
+00008000= 45 6E 74 65 72 20 ...     48  MESSAGE DC.B    'Enter an input: ',0
+00008011= 55 20 65 6E 74 65 ...     49  M_ONE   DC.B    'U entered ONE!',0
+00008020= 55 20 65 6E 74 65 ...     50  M_TWO   DC.B    'U entered TWO!',0
+0000802F                            51  
+00008030  FFFF FFFF                 52      SIMHALT             ; halt simulator
+00008034                            53  
+00008034                            54  * Put variables and constants here
+00008034                            55  ENDOFPROG:
+00008034                            56      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+ENDOFPROG           8034
+F_ONE               1026
+F_TWO               1034
+MESSAGE             8000
+M_ONE               8011
+M_TWO               8020
+START               1000
