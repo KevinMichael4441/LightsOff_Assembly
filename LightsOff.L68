@@ -1,63 +1,98 @@
 00001000 Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 3/31/2026 8:27:19 PM
+Created On: 3/31/2026 9:10:17 PM
 
 00000000                             1  *-----------------------------------------------------------
-00000000                             2  * Title      :
-00000000                             3  * Written by :
-00000000                             4  * Date       :
-00000000                             5  * Description:
+00000000                             2  * Title      : Lights Off - An Assembly Game
+00000000                             3  * Written by : Kevin Michael (c00313509)
+00000000                             4  * Description: Recreating the Lights Out game that can be found at
+00000000                             5  *              https://dotnet.github.io/dotnet-console-games/Lights%20Out
 00000000                             6  *-----------------------------------------------------------
 00001000                             7      ORG    $1000
 00001000                             8  START:                  ; first instruction of program
 00001000                             9  
 00001000                            10  * Put program code here
 00001000                            11  
-00001000                            12      ; Display "Enter an input: "
-00001000  43F9 00008000             13      LEA     MESSAGE, A1
-00001006  103C 000D                 14      MOVE.B  #13, D0
-0000100A  4E4F                      15      TRAP    #15
-0000100C                            16      
-0000100C                            17      ; Input number into D1
-0000100C  103C 0004                 18      MOVE.B  #4, D0
-00001010  4E4F                      19      TRAP    #15
-00001012                            20      
-00001012                            21      
-00001012                            22      ; Is inputted number 1?
-00001012  0C01 0001                 23      CMPI.B  #1,D1
-00001016  6700 000E                 24      BEQ     F_ONE
-0000101A                            25      
-0000101A                            26      ; Is inputted number 2?
-0000101A  0C01 0002                 27      CMPI.B  #2,D1
-0000101E  6700 0014                 28      BEQ     F_TWO
-00001022                            29      
-00001022                            30      ; End the Program
-00001022  6000 7010                 31      BRA     ENDOFPROG
-00001026                            32      
-00001026                            33      
-00001026                            34  F_ONE:
-00001026  43F9 00008011             35      LEA     M_ONE, A1
-0000102C  103C 000D                 36      MOVE.B  #13, D0
-00001030  4E4F                      37      TRAP    #15
-00001032  4E75                      38      RTS
-00001034                            39     
-00001034                            40  F_TWO:
-00001034  43F9 00008020             41      LEA     M_TWO, A1
-0000103A  103C 000D                 42      MOVE.B  #13, D0
-0000103E  4E4F                      43      TRAP    #15
-00001040  4E75                      44      RTS
-00001042                            45  
-00001042                            46  
-00008000                            47      ORG $8000
-00008000= 45 6E 74 65 72 20 ...     48  MESSAGE DC.B    'Enter an input: ',0
-00008011= 55 20 65 6E 74 65 ...     49  M_ONE   DC.B    'U entered ONE!',0
-00008020= 55 20 65 6E 74 65 ...     50  M_TWO   DC.B    'U entered TWO!',0
-0000802F                            51  
-00008030  FFFF FFFF                 52      SIMHALT             ; halt simulator
-00008034                            53  
-00008034                            54  * Put variables and constants here
-00008034                            55  ENDOFPROG:
-00008034                            56      END    START        ; last line of source
+00001000                            12      ; D8 being 1 is the condition for the while loop to run
+00001000  1E3C 0001                 13      MOVE.B  #1, D7
+00001004                            14      
+00001004                            15      ; Start the loop if condition satisfies
+00001004  0C07 0001                 16      CMPI.B  #1, D7
+00001008  6700 0002                 17      BEQ     WHILE_LOOP
+0000100C                            18  
+0000100C                            19  
+0000100C                            20  WHILE_LOOP:
+0000100C                            21      ; Is loop condition true?
+0000100C  4A07                      22      TST.B   D7
+0000100E  6700 7024                 23      BEQ     ENDOFPROG
+00001012                            24      
+00001012                            25      ; Sub-Routine to Display on screen
+00001012  6100 002A                 26      BSR     DISPLAY
+00001016                            27      
+00001016                            28      ; Sub-Routine to Update Game
+00001016  6100 0034                 29      BSR     UPDATE
+0000101A                            30      
+0000101A                            31      
+0000101A                            32      ; Run it again
+0000101A  60F0                      33      BRA     WHILE_LOOP
+0000101C                            34      
+0000101C                            35      
+0000101C                            36  F_ONE:
+0000101C  43F9 00008011             37      LEA     M_ONE, A1
+00001022  103C 000D                 38      MOVE.B  #13, D0
+00001026  4E4F                      39      TRAP    #15
+00001028  60E2                      40      BRA     WHILE_LOOP
+0000102A                            41     
+0000102A                            42  F_TWO:
+0000102A  43F9 00008020             43      LEA     M_TWO, A1
+00001030  103C 000D                 44      MOVE.B  #13, D0
+00001034  4E4F                      45      TRAP    #15
+00001036  60D4                      46      BRA     WHILE_LOOP
+00001038                            47      
+00001038                            48  F_THREE:
+00001038  0887 0000                 49      BCLR    #0, D7
+0000103C  60CE                      50      BRA     WHILE_LOOP
+0000103E                            51  
+0000103E                            52  
+0000103E                            53  DISPLAY:
+0000103E                            54      ; Display "Enter an input: "
+0000103E  43F9 00008000             55      LEA     MESSAGE, A1
+00001044  103C 000D                 56      MOVE.B  #13, D0
+00001048  4E4F                      57      TRAP    #15
+0000104A  4E75                      58      RTS
+0000104C                            59      
+0000104C                            60      
+0000104C                            61  UPDATE:
+0000104C                            62      ; Input number into D1
+0000104C  103C 0004                 63      MOVE.B  #4, D0
+00001050  4E4F                      64      TRAP    #15
+00001052                            65      
+00001052                            66      
+00001052                            67      ; Is inputted number 1?
+00001052  0C01 0001                 68      CMPI.B  #1,D1
+00001056  67C4                      69      BEQ     F_ONE
+00001058                            70      
+00001058                            71      ; Is inputted number 2?
+00001058  0C01 0002                 72      CMPI.B  #2,D1
+0000105C  67CC                      73      BEQ     F_TWO
+0000105E                            74      
+0000105E                            75      ; Is inputted number 2?
+0000105E  0C01 0003                 76      CMPI.B  #3,D1
+00001062  67D4                      77      BEQ     F_THREE
+00001064                            78      
+00001064  4E75                      79      RTS 
+00001066                            80      
+00001066                            81  
+00008000                            82      ORG $8000
+00008000= 45 6E 74 65 72 20 ...     83  MESSAGE DC.B    'Enter an input: ',0
+00008011= 55 20 65 6E 74 65 ...     84  M_ONE   DC.B    'U entered ONE!',0
+00008020= 55 20 65 6E 74 65 ...     85  M_TWO   DC.B    'U entered TWO!',0
+0000802F                            86  
+00008030  FFFF FFFF                 87      SIMHALT             ; halt simulator
+00008034                            88  
+00008034                            89  * Put variables and constants here
+00008034                            90  ENDOFPROG:
+00008034                            91      END    START        ; last line of source
 
 No errors detected
 No warnings generated
@@ -66,10 +101,14 @@ No warnings generated
 SYMBOL TABLE INFORMATION
 Symbol-name         Value
 -------------------------
+DISPLAY             103E
 ENDOFPROG           8034
-F_ONE               1026
-F_TWO               1034
+F_ONE               101C
+F_THREE             1038
+F_TWO               102A
 MESSAGE             8000
 M_ONE               8011
 M_TWO               8020
 START               1000
+UPDATE              104C
+WHILE_LOOP          100C
