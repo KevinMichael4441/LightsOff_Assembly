@@ -39,7 +39,6 @@ WHILE_LOOP:
 F_WEST:
 
     MOVE.L  D6, D2
-    
     DIVU    #5, D2
     ; Masking Quotient of division coz we only need Remainder
     AND.W   #$0000, D2
@@ -53,17 +52,60 @@ F_WEST:
     BRA     WHILE_LOOP
     
 MOVE_WEST:
-    SUB.B   #1, D6
+    SUBI.B   #1, D6
     BRA     WHILE_LOOP
    
-F_TWO:
-    LEA     M_TWO, A1
-    MOVE.B  #13, D0
-    TRAP    #15
+F_NORTH:
+    MOVE.L  D6, D2
+    
+    DIVU    #5, D2
+    
+    ; currentPos is topmost if quotient == 0
+    CMPI.B  #0, D2
+    
+    ; If currentPos not in topmost, then move up
+    BNE     MOVE_NORTH
+    
     BRA     WHILE_LOOP
     
-F_THREE:
-    BCLR    #0, D7
+MOVE_NORTH:
+    SUBI.B   #5, D6
+    BRA     WHILE_LOOP
+    
+F_EAST:
+
+    MOVE.L  D6, D2
+    DIVU    #5, D2
+    ; Masking Quotient of division coz we only need Remainder
+    AND.W   #$0000, D2
+    
+    ; currentPos is leftmost if remainder == 4 (grid ranges from 0-4)
+    ; If remainder == 4, then  the only bit active (after masking) would be the 18th  bit.
+    ; This we can test using BTST
+    BTST    #18, D2
+    
+    ; If currentPos not in rightmost, then move right
+    BEQ     MOVE_EAST
+    
+    BRA     WHILE_LOOP
+    
+MOVE_EAST:
+    ADD.B   #1, D6
+    BRA     WHILE_LOOP
+    
+F_SOUTH:
+    MOVE.L  D6, D2
+    DIVU    #5, D2
+    ; currentPos is bottommost if quotient == 4
+    CMPI.B  #4, D2
+    
+    ; If currentPos not in bottommost, then move down
+    BNE     MOVE_SOUTH
+    
+    BRA     WHILE_LOOP
+    
+MOVE_SOUTH:
+    ADD.B   #5, D6
     BRA     WHILE_LOOP
     
     
@@ -125,13 +167,18 @@ UPDATE:
     CMPI.B  #4,D1
     BEQ     F_WEST
     
-    ; Is inputted number 2?
-    CMPI.B  #2,D1
-    BEQ     F_TWO
+    ; Is inputted number 8?
+    CMPI.B  #8,D1
+    BEQ     F_NORTH
+    
+    ; Is inputted number 6?
+    CMPI.B  #6,D1
+    BEQ     F_EAST
     
     ; Is inputted number 2?
-    CMPI.B  #3,D1
-    BEQ     F_THREE
+    CMPI.B  #2,D1
+    BEQ     F_SOUTH
+    
     
     RTS 
     
