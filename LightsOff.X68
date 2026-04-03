@@ -9,8 +9,11 @@ START:                  ; first instruction of program
 
 * Put program code here
 
-    ; D8 being 1 is the condition for the while loop to run
+    ; D7 being 1 is the condition for the while loop to run
     MOVE.B  #1, D7
+    
+    ; The index of grid that player is on (set to 0 at start)
+    MOVE.B  #0, D6
     
     ; Start the loop if condition satisfies
     CMPI.B  #1, D7
@@ -48,13 +51,45 @@ F_TWO:
 F_THREE:
     BCLR    #0, D7
     BRA     WHILE_LOOP
-
-
+    
+    
 DISPLAY:
-    ; Display "Enter an input: "
-    LEA     MESSAGE, A1
+    ; Do all displays
+    MOVE.W  #$FF00, D1
+    MOVE.B  #11, D0
+    TRAP    #15
+       
+    
+    BSR DISPLAY_INPUT
+    RTS
+
+
+DISPLAY_INPUT:
+    ; Display messages for input
+    LEA     MESSAGE_1, A1
     MOVE.B  #13, D0
     TRAP    #15
+    
+    LEA     MESSAGE_2, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    LEA     MESSAGE_3, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    LEA     MESSAGE_4, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    LEA     MESSAGE_5, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    LEA     CARRIAGE_RETURN, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
     RTS
     
     
@@ -80,7 +115,19 @@ UPDATE:
     
 
     ORG $8000
-MESSAGE DC.B    'Enter an input: ',0
+MESSAGE_1   DC.B    '4 to go West ',0
+MESSAGE_2   DC.B    '8 to go North',0
+MESSAGE_3   DC.B    '6 to go East',0
+MESSAGE_4   DC.B    '2 to go South',0
+MESSAGE_5   DC.B    '5 to flip switches',0
+
+
+; Is this better than printing CR and LF seperately using Task 6?
+; Prolly not but have to testt clock cycles to confirm.
+CARRIAGE_RETURN DC.B    '',0
+
+
+
 M_ONE   DC.B    'U entered ONE!',0
 M_TWO   DC.B    'U entered TWO!',0
 
@@ -89,6 +136,7 @@ M_TWO   DC.B    'U entered TWO!',0
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
 
 
 

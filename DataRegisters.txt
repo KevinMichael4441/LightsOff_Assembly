@@ -1,3 +1,0 @@
-D0 and D1 -> I/O handling
-
-D7 -> Loop condition
