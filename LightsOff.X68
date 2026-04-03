@@ -13,7 +13,7 @@ START:                  ; first instruction of program
     MOVE.B  #1, D7
     
     ; The index of grid that player is on (set to 0 at start)
-    MOVE.B  #0, D6
+    MOVE.B  #8, D6
     
     ; Start the loop if condition satisfies
     CMPI.B  #1, D7
@@ -36,10 +36,24 @@ WHILE_LOOP:
     BRA     WHILE_LOOP
     
     
-F_ONE:
-    LEA     M_ONE, A1
-    MOVE.B  #13, D0
-    TRAP    #15
+F_WEST:
+
+    MOVE.L  D6, D3
+    
+    DIVU    #5, D3
+    ; Masking Quotient of division coz we only need Remainder
+    AND.W   #$0000, D3
+    
+    ; currentPos is leftmost if remainder == 0
+    CMPI.L  #0, D3
+    
+    ; If currentPos not in leftmost, then move left
+    BNE     MOVE_WEST
+    
+    BRA     WHILE_LOOP
+    
+MOVE_WEST:
+    SUB.B   #1, D6
     BRA     WHILE_LOOP
    
 F_TWO:
@@ -55,34 +69,42 @@ F_THREE:
     
 DISPLAY:
     ; Do all displays
+    
+    ;Clear Screen before next draw
     MOVE.W  #$FF00, D1
     MOVE.B  #11, D0
     TRAP    #15
        
     
     BSR DISPLAY_INPUT
+    
+    
+    MOVE.L  D6, D1
+    MOVE.B  #3, D0
+    TRAP    #15
+    
     RTS
 
 
 DISPLAY_INPUT:
     ; Display messages for input
-    LEA     MESSAGE_1, A1
+    LEA     INPUT_MESSAGE_1, A1
     MOVE.B  #13, D0
     TRAP    #15
     
-    LEA     MESSAGE_2, A1
+    LEA     INPUT_MESSAGE_2, A1
     MOVE.B  #13, D0
     TRAP    #15
     
-    LEA     MESSAGE_3, A1
+    LEA     INPUT_MESSAGE_3, A1
     MOVE.B  #13, D0
     TRAP    #15
     
-    LEA     MESSAGE_4, A1
+    LEA     INPUT_MESSAGE_4, A1
     MOVE.B  #13, D0
     TRAP    #15
     
-    LEA     MESSAGE_5, A1
+    LEA     INPUT_MESSAGE_5, A1
     MOVE.B  #13, D0
     TRAP    #15
     
@@ -99,9 +121,9 @@ UPDATE:
     TRAP    #15
     
     
-    ; Is inputted number 1?
-    CMPI.B  #1,D1
-    BEQ     F_ONE
+    ; Is inputted number 4?
+    CMPI.B  #4,D1
+    BEQ     F_WEST
     
     ; Is inputted number 2?
     CMPI.B  #2,D1
@@ -115,11 +137,11 @@ UPDATE:
     
 
     ORG $8000
-MESSAGE_1   DC.B    '4 to go West ',0
-MESSAGE_2   DC.B    '8 to go North',0
-MESSAGE_3   DC.B    '6 to go East',0
-MESSAGE_4   DC.B    '2 to go South',0
-MESSAGE_5   DC.B    '5 to flip switches',0
+INPUT_MESSAGE_1   DC.B    '4 to go West ',0
+INPUT_MESSAGE_2   DC.B    '8 to go North',0
+INPUT_MESSAGE_3   DC.B    '6 to go East',0
+INPUT_MESSAGE_4   DC.B    '2 to go South',0
+INPUT_MESSAGE_5   DC.B    '5 to flip switches',0
 
 
 ; Is this better than printing CR and LF seperately using Task 6?
@@ -136,6 +158,7 @@ M_TWO   DC.B    'U entered TWO!',0
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
 
 
 

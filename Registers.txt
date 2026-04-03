@@ -3,3 +3,5 @@ D0 and D1 -> I/O handling
 D7 -> Loop condition
 
 D6 -> Current Pos
+
+D2 -> Calculations

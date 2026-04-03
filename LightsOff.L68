@@ -1,6 +1,6 @@
 00001000 Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 4/3/2026 7:42:02 PM
+Created On: 4/3/2026 8:58:29 PM
 
 00000000                             1  *-----------------------------------------------------------
 00000000                             2  * Title      : Lights Off - An Assembly Game
@@ -17,7 +17,7 @@ Created On: 4/3/2026 7:42:02 PM
 00001000  1E3C 0001                 13      MOVE.B  #1, D7
 00001004                            14      
 00001004                            15      ; The index of grid that player is on (set to 0 at start)
-00001004  1C3C 0000                 16      MOVE.B  #0, D6
+00001004  1C3C 0008                 16      MOVE.B  #8, D6
 00001008                            17      
 00001008                            18      ; Start the loop if condition satisfies
 00001008  0C07 0001                 19      CMPI.B  #1, D7
@@ -30,116 +30,138 @@ Created On: 4/3/2026 7:42:02 PM
 00001012  6700 705A                 26      BEQ     ENDOFPROG
 00001016                            27      
 00001016                            28      ; Sub-Routine to Display on screen
-00001016  6100 002A                 29      BSR     DISPLAY
+00001016  6100 0036                 29      BSR     DISPLAY
 0000101A                            30      
 0000101A                            31      ; Sub-Routine to Update Game
-0000101A  6100 0080                 32      BSR     UPDATE
+0000101A  6100 0094                 32      BSR     UPDATE
 0000101E                            33      
 0000101E                            34      
 0000101E                            35      ; Run it again
 0000101E  60F0                      36      BRA     WHILE_LOOP
 00001020                            37      
 00001020                            38      
-00001020                            39  F_ONE:
-00001020  43F9 0000804B             40      LEA     M_ONE, A1
-00001026  103C 000D                 41      MOVE.B  #13, D0
-0000102A  4E4F                      42      TRAP    #15
-0000102C  60E2                      43      BRA     WHILE_LOOP
-0000102E                            44     
-0000102E                            45  F_TWO:
-0000102E  43F9 0000805A             46      LEA     M_TWO, A1
-00001034  103C 000D                 47      MOVE.B  #13, D0
-00001038  4E4F                      48      TRAP    #15
-0000103A  60D4                      49      BRA     WHILE_LOOP
-0000103C                            50      
-0000103C                            51  F_THREE:
-0000103C  0887 0000                 52      BCLR    #0, D7
-00001040  60CE                      53      BRA     WHILE_LOOP
-00001042                            54      
-00001042                            55      
-00001042                            56  DISPLAY:
-00001042                            57      ; Do all displays
-00001042  323C FF00                 58      MOVE.W  #$FF00, D1
-00001046  103C 000B                 59      MOVE.B  #11, D0
-0000104A  4E4F                      60      TRAP    #15
-0000104C                            61         
-0000104C                            62      
-0000104C  6100 0004                 63      BSR DISPLAY_INPUT
-00001050  4E75                      64      RTS
-00001052                            65  
-00001052                            66  
-00001052                            67  DISPLAY_INPUT:
-00001052                            68      ; Display messages for input
-00001052  43F9 00008000             69      LEA     MESSAGE_1, A1
-00001058  103C 000D                 70      MOVE.B  #13, D0
-0000105C  4E4F                      71      TRAP    #15
-0000105E                            72      
-0000105E  43F9 0000800E             73      LEA     MESSAGE_2, A1
-00001064  103C 000D                 74      MOVE.B  #13, D0
-00001068  4E4F                      75      TRAP    #15
-0000106A                            76      
-0000106A  43F9 0000801C             77      LEA     MESSAGE_3, A1
-00001070  103C 000D                 78      MOVE.B  #13, D0
-00001074  4E4F                      79      TRAP    #15
-00001076                            80      
-00001076  43F9 00008029             81      LEA     MESSAGE_4, A1
-0000107C  103C 000D                 82      MOVE.B  #13, D0
-00001080  4E4F                      83      TRAP    #15
-00001082                            84      
-00001082  43F9 00008037             85      LEA     MESSAGE_5, A1
-00001088  103C 000D                 86      MOVE.B  #13, D0
-0000108C  4E4F                      87      TRAP    #15
-0000108E                            88      
-0000108E  43F9 0000804A             89      LEA     CARRIAGE_RETURN, A1
-00001094  103C 000D                 90      MOVE.B  #13, D0
-00001098  4E4F                      91      TRAP    #15
-0000109A                            92      
-0000109A  4E75                      93      RTS
-0000109C                            94      
-0000109C                            95      
-0000109C                            96  UPDATE:
-0000109C                            97      ; Input number into D1
-0000109C  103C 0004                 98      MOVE.B  #4, D0
-000010A0  4E4F                      99      TRAP    #15
-000010A2                           100      
-000010A2                           101      
-000010A2                           102      ; Is inputted number 1?
-000010A2  0C01 0001                103      CMPI.B  #1,D1
-000010A6  6700 FF78                104      BEQ     F_ONE
-000010AA                           105      
-000010AA                           106      ; Is inputted number 2?
-000010AA  0C01 0002                107      CMPI.B  #2,D1
-000010AE  6700 FF7E                108      BEQ     F_TWO
-000010B2                           109      
-000010B2                           110      ; Is inputted number 2?
-000010B2  0C01 0003                111      CMPI.B  #3,D1
-000010B6  6784                     112      BEQ     F_THREE
-000010B8                           113      
-000010B8  4E75                     114      RTS 
-000010BA                           115      
-000010BA                           116  
-00008000                           117      ORG $8000
-00008000= 34 20 74 6F 20 67 ...    118  MESSAGE_1   DC.B    '4 to go West ',0
-0000800E= 38 20 74 6F 20 67 ...    119  MESSAGE_2   DC.B    '8 to go North',0
-0000801C= 36 20 74 6F 20 67 ...    120  MESSAGE_3   DC.B    '6 to go East',0
-00008029= 32 20 74 6F 20 67 ...    121  MESSAGE_4   DC.B    '2 to go South',0
-00008037= 35 20 74 6F 20 66 ...    122  MESSAGE_5   DC.B    '5 to flip switches',0
-0000804A                           123  
-0000804A                           124  
-0000804A                           125  ; Is this better than printing CR and LF seperately using Task 6?
-0000804A                           126  ; Prolly not but have to testt clock cycles to confirm.
-0000804A= 00                       127  CARRIAGE_RETURN DC.B    '',0
-0000804B                           128  
-0000804B                           129  
-0000804B                           130  
-0000804B= 55 20 65 6E 74 65 ...    131  M_ONE   DC.B    'U entered ONE!',0
-0000805A= 55 20 65 6E 74 65 ...    132  M_TWO   DC.B    'U entered TWO!',0
-00008069                           133  
-0000806A  FFFF FFFF                134      SIMHALT             ; halt simulator
-0000806E                           135  
-0000806E                           136  * Put variables and constants here
-0000806E                           137  ENDOFPROG:
-0000806E                           138      END    START        ; last line of source
+00001020                            39  F_WEST:
+00001020                            40  
+00001020  2606                      41      MOVE.L  D6, D3
+00001022                            42      
+00001022  86FC 0005                 43      DIVU    #5, D3
+00001026                            44      ; Masking Quotient of division coz we only need Remainder
+00001026  C67C 0000                 45      AND.W   #$0000, D3
+0000102A                            46      
+0000102A                            47      ; currentPos is leftmost if remainder == 0
+0000102A  0C83 00000000             48      CMPI.L  #0, D3
+00001030                            49      
+00001030                            50      ; If currentPos not in leftmost, then move left
+00001030  6600 0004                 51      BNE     MOVE_WEST
+00001034                            52      
+00001034  60DA                      53      BRA     WHILE_LOOP
+00001036                            54      
+00001036                            55  MOVE_WEST:
+00001036  5306                      56      SUB.B   #1, D6
+00001038  60D6                      57      BRA     WHILE_LOOP
+0000103A                            58     
+0000103A                            59  F_TWO:
+0000103A  43F9 0000805A             60      LEA     M_TWO, A1
+00001040  103C 000D                 61      MOVE.B  #13, D0
+00001044  4E4F                      62      TRAP    #15
+00001046  60C8                      63      BRA     WHILE_LOOP
+00001048                            64      
+00001048                            65  F_THREE:
+00001048  0887 0000                 66      BCLR    #0, D7
+0000104C  60C2                      67      BRA     WHILE_LOOP
+0000104E                            68      
+0000104E                            69      
+0000104E                            70  DISPLAY:
+0000104E                            71      ; Do all displays
+0000104E                            72      
+0000104E                            73      ;Clear Screen before next draw
+0000104E  323C FF00                 74      MOVE.W  #$FF00, D1
+00001052  103C 000B                 75      MOVE.B  #11, D0
+00001056  4E4F                      76      TRAP    #15
+00001058                            77         
+00001058                            78      
+00001058  6100 000C                 79      BSR DISPLAY_INPUT
+0000105C                            80      
+0000105C                            81      
+0000105C  2206                      82      MOVE.L  D6, D1
+0000105E  103C 0003                 83      MOVE.B  #3, D0
+00001062  4E4F                      84      TRAP    #15
+00001064                            85      
+00001064  4E75                      86      RTS
+00001066                            87  
+00001066                            88  
+00001066                            89  DISPLAY_INPUT:
+00001066                            90      ; Display messages for input
+00001066  43F9 00008000             91      LEA     INPUT_MESSAGE_1, A1
+0000106C  103C 000D                 92      MOVE.B  #13, D0
+00001070  4E4F                      93      TRAP    #15
+00001072                            94      
+00001072  43F9 0000800E             95      LEA     INPUT_MESSAGE_2, A1
+00001078  103C 000D                 96      MOVE.B  #13, D0
+0000107C  4E4F                      97      TRAP    #15
+0000107E                            98      
+0000107E  43F9 0000801C             99      LEA     INPUT_MESSAGE_3, A1
+00001084  103C 000D                100      MOVE.B  #13, D0
+00001088  4E4F                     101      TRAP    #15
+0000108A                           102      
+0000108A  43F9 00008029            103      LEA     INPUT_MESSAGE_4, A1
+00001090  103C 000D                104      MOVE.B  #13, D0
+00001094  4E4F                     105      TRAP    #15
+00001096                           106      
+00001096  43F9 00008037            107      LEA     INPUT_MESSAGE_5, A1
+0000109C  103C 000D                108      MOVE.B  #13, D0
+000010A0  4E4F                     109      TRAP    #15
+000010A2                           110      
+000010A2  43F9 0000804A            111      LEA     CARRIAGE_RETURN, A1
+000010A8  103C 000D                112      MOVE.B  #13, D0
+000010AC  4E4F                     113      TRAP    #15
+000010AE                           114      
+000010AE  4E75                     115      RTS
+000010B0                           116      
+000010B0                           117      
+000010B0                           118  UPDATE:
+000010B0                           119      ; Input number into D1
+000010B0  103C 0004                120      MOVE.B  #4, D0
+000010B4  4E4F                     121      TRAP    #15
+000010B6                           122      
+000010B6                           123      
+000010B6                           124      ; Is inputted number 4?
+000010B6  0C01 0004                125      CMPI.B  #4,D1
+000010BA  6700 FF64                126      BEQ     F_WEST
+000010BE                           127      
+000010BE                           128      ; Is inputted number 2?
+000010BE  0C01 0002                129      CMPI.B  #2,D1
+000010C2  6700 FF76                130      BEQ     F_TWO
+000010C6                           131      
+000010C6                           132      ; Is inputted number 2?
+000010C6  0C01 0003                133      CMPI.B  #3,D1
+000010CA  6700 FF7C                134      BEQ     F_THREE
+000010CE                           135      
+000010CE  4E75                     136      RTS 
+000010D0                           137      
+000010D0                           138  
+00008000                           139      ORG $8000
+00008000= 34 20 74 6F 20 67 ...    140  INPUT_MESSAGE_1   DC.B    '4 to go West ',0
+0000800E= 38 20 74 6F 20 67 ...    141  INPUT_MESSAGE_2   DC.B    '8 to go North',0
+0000801C= 36 20 74 6F 20 67 ...    142  INPUT_MESSAGE_3   DC.B    '6 to go East',0
+00008029= 32 20 74 6F 20 67 ...    143  INPUT_MESSAGE_4   DC.B    '2 to go South',0
+00008037= 35 20 74 6F 20 66 ...    144  INPUT_MESSAGE_5   DC.B    '5 to flip switches',0
+0000804A                           145  
+0000804A                           146  
+0000804A                           147  ; Is this better than printing CR and LF seperately using Task 6?
+0000804A                           148  ; Prolly not but have to testt clock cycles to confirm.
+0000804A= 00                       149  CARRIAGE_RETURN DC.B    '',0
+0000804B                           150  
+0000804B                           151  
+0000804B                           152  
+0000804B= 55 20 65 6E 74 65 ...    153  M_ONE   DC.B    'U entered ONE!',0
+0000805A= 55 20 65 6E 74 65 ...    154  M_TWO   DC.B    'U entered TWO!',0
+00008069                           155  
+0000806A  FFFF FFFF                156      SIMHALT             ; halt simulator
+0000806E                           157  
+0000806E                           158  * Put variables and constants here
+0000806E                           159  ENDOFPROG:
+0000806E                           160      END    START        ; last line of source
 
 No errors detected
 No warnings generated
@@ -149,19 +171,20 @@ SYMBOL TABLE INFORMATION
 Symbol-name         Value
 -------------------------
 CARRIAGE_RETURN     804A
-DISPLAY             1042
-DISPLAY_INPUT       1052
+DISPLAY             104E
+DISPLAY_INPUT       1066
 ENDOFPROG           806E
-F_ONE               1020
-F_THREE             103C
-F_TWO               102E
-MESSAGE_1           8000
-MESSAGE_2           800E
-MESSAGE_3           801C
-MESSAGE_4           8029
-MESSAGE_5           8037
+F_THREE             1048
+F_TWO               103A
+F_WEST              1020
+INPUT_MESSAGE_1     8000
+INPUT_MESSAGE_2     800E
+INPUT_MESSAGE_3     801C
+INPUT_MESSAGE_4     8029
+INPUT_MESSAGE_5     8037
+MOVE_WEST           1036
 M_ONE               804B
 M_TWO               805A
 START               1000
-UPDATE              109C
+UPDATE              10B0
 WHILE_LOOP          1010
