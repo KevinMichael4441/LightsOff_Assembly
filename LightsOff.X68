@@ -38,14 +38,14 @@ WHILE_LOOP:
     
 F_WEST:
 
-    MOVE.L  D6, D3
+    MOVE.L  D6, D2
     
-    DIVU    #5, D3
+    DIVU    #5, D2
     ; Masking Quotient of division coz we only need Remainder
-    AND.W   #$0000, D3
+    AND.W   #$0000, D2
     
     ; currentPos is leftmost if remainder == 0
-    CMPI.L  #0, D3
+    CMPI.L  #0, D2
     
     ; If currentPos not in leftmost, then move left
     BNE     MOVE_WEST
@@ -158,6 +158,7 @@ M_TWO   DC.B    'U entered TWO!',0
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
 
 
 

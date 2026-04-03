@@ -1,6 +1,6 @@
 00001000 Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 4/3/2026 8:58:29 PM
+Created On: 4/3/2026 9:00:19 PM
 
 00000000                             1  *-----------------------------------------------------------
 00000000                             2  * Title      : Lights Off - An Assembly Game
@@ -42,14 +42,14 @@ Created On: 4/3/2026 8:58:29 PM
 00001020                            38      
 00001020                            39  F_WEST:
 00001020                            40  
-00001020  2606                      41      MOVE.L  D6, D3
+00001020  2406                      41      MOVE.L  D6, D2
 00001022                            42      
-00001022  86FC 0005                 43      DIVU    #5, D3
+00001022  84FC 0005                 43      DIVU    #5, D2
 00001026                            44      ; Masking Quotient of division coz we only need Remainder
-00001026  C67C 0000                 45      AND.W   #$0000, D3
+00001026  C47C 0000                 45      AND.W   #$0000, D2
 0000102A                            46      
 0000102A                            47      ; currentPos is leftmost if remainder == 0
-0000102A  0C83 00000000             48      CMPI.L  #0, D3
+0000102A  0C82 00000000             48      CMPI.L  #0, D2
 00001030                            49      
 00001030                            50      ; If currentPos not in leftmost, then move left
 00001030  6600 0004                 51      BNE     MOVE_WEST
