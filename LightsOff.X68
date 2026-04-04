@@ -68,11 +68,53 @@ F_FLIP:
     
     NO_FLIP_LEFT:
 
+    
+    ; Setting up variable for for-loop
+    CLR     D7
+    CLR     D0
+    MOVE.B  #24, D0
+    BRA     CHECK_GAME_WIN
 
     BRA     WHILE_LOOP
     
+
+GAME_WON:   
+    BSR     DISPLAY
+    
+    LEA     CARRIAGE_RETURN, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    LEA     VICTORY_MESSAGE, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    BRA     ENDOFPROG
     
     
+CHECK_GAME_WIN:
+    TST.B   D0
+    BEQ     GAME_WON
+    
+
+    LEA     ROW_0, A2
+    ADD     D0, A2
+    
+    CMPI.B  #1, (A2)
+    BEQ     CONTINUE_PLAYING  
+    
+    
+    
+    SUBI.B  #1, D0
+    BRA     CHECK_GAME_WIN
+    
+
+CONTINUE_PLAYING:
+    MOVE.B  #1, D7
+    
+    BRA     WHILE_LOOP
+    
+
 FLIP_WEST:
     LEA     ROW_0, A2
     ADD.W   D6, A2
@@ -429,6 +471,7 @@ INPUT_MESSAGE_2   DC.B    '8 to go North',0
 INPUT_MESSAGE_3   DC.B    '6 to go East',0
 INPUT_MESSAGE_4   DC.B    '2 to go South',0
 INPUT_MESSAGE_5   DC.B    '5 to flip switches',0
+VICTORY_MESSAGE   DC.B    'YOU WON!!!',0
 
 
 ; Is this better than printing CR and LF seperately using Task 6?
@@ -441,9 +484,9 @@ UNDERSCORE      DC.B    '_',0
     ORG $7000
 ; Creating a grid of 25 bytes with values set to 0
 ROW_0 DC.B 0,0,0,0,0
-ROW_1 DC.B 0,0,0,0,0
-ROW_2 DC.B 1,0,1,0,1
-ROW_3 DC.B 0,0,0,0,0
+ROW_1 DC.B 0,0,1,0,0
+ROW_2 DC.B 0,1,1,1,0
+ROW_3 DC.B 0,0,1,0,0
 ROW_4 DC.B 0,0,0,0,0 
 
 
@@ -454,6 +497,7 @@ ROW_4 DC.B 0,0,0,0,0
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
 
 
 
