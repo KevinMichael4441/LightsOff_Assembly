@@ -74,18 +74,35 @@ F_FLIP:
     
     
 FLIP_WEST:
-    
-
+    LEA     ROW_0, A2
+    ADD.W   D6, A2
+    SUB.W   #1, A2
+    BCHG    #0, (A2)
 
     BRA THREE_FLIP_LEFT
     
 FLIP_NORTH:
+    LEA     ROW_0, A2
+    ADD.W   D6, A2
+    SUB.W   #5, A2
+    BCHG    #0, (A2)
+    
     BRA TWO_FLIP_LEFT
     
 FLIP_EAST:
+    LEA     ROW_0, A2
+    ADD.W   D6, A2
+    ADD.W   #1, A2
+    BCHG    #0, (A2)
+    
     BRA ONE_FLIP_LEFT
     
 FLIP_SOUTH:
+    LEA     ROW_0, A2
+    ADD.W   D6, A2
+    ADD.W   #5, A2
+    BCHG    #0, (A2)
+    
     BRA NO_FLIP_LEFT
     
 
@@ -437,6 +454,7 @@ ROW_4 DC.B 0,0,0,0,0
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
 
 
 
