@@ -36,6 +36,59 @@ WHILE_LOOP:
     BRA     WHILE_LOOP
     
     
+F_FLIP:
+    ; D0 will have quotient (row) and D1 will have remainder (col)
+    MOVE.L  D6, D0
+    DIVU    #5, D0
+    MOVE.L  D0, D1
+    SWAP    D1
+    
+    LEA     ROW_0, A2
+    ADD.W    D6, A2
+    ; fLIP THE CURRENT ONE
+    BCHG    #0,(A2)
+    
+    CMPI.B  #0, D1
+    BNE     FLIP_WEST
+    
+    THREE_FLIP_LEFT:
+    
+    CMPI.B  #0, D0
+    BNE     FLIP_NORTH
+    
+    TWO_FLIP_LEFT:
+    
+    CMPI.B  #4, D1
+    BNE     FLIP_EAST
+    
+    ONE_FLIP_LEFT:
+    
+    CMPI.B  #4, D0
+    BNE     FLIP_SOUTH
+    
+    NO_FLIP_LEFT:
+
+
+    BRA     WHILE_LOOP
+    
+    
+    
+FLIP_WEST:
+    
+
+
+    BRA THREE_FLIP_LEFT
+    
+FLIP_NORTH:
+    BRA TWO_FLIP_LEFT
+    
+FLIP_EAST:
+    BRA ONE_FLIP_LEFT
+    
+FLIP_SOUTH:
+    BRA NO_FLIP_LEFT
+    
+
 F_WEST:
 
     MOVE.L  D6, D2
@@ -322,17 +375,6 @@ LOAD_ROW_3:
 LOAD_ROW_4:
     LEA     ROW_4, A2
     BRA     RETURN_AFTER_LOADING_ROW
-
-FOR_ROW_DISPLAY:
-    CMP.B   #5, D3
-    BLT     FOR_COL_DISPLAY
-    
-    MOVE.B  #0, D4
-    ADDQ.B  #1, D3  
-    
-    CMPI.B  #5, D3
-
-FOR_COL_DISPLAY:
     
     
 UPDATE:
@@ -356,6 +398,9 @@ UPDATE:
     ; Is inputted number 2?
     CMPI.B  #2,D1
     BEQ     F_SOUTH
+    
+    CMPI.B  #5, D1
+    BEQ     F_FLIP
     
     
     RTS 
@@ -392,6 +437,7 @@ ROW_4 DC.B 0,0,0,0,0
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
 
 
 
