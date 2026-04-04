@@ -194,34 +194,40 @@ UPDATE:
     MOVE.B  #7, D0
     TRAP    #15
     
+    ; First, we put 1 into D1 to indicate that we would like to read keyboard input
+    ; Then, on running TRAP #15, it clears D1 if nothing in keyboard was pressed and
+    ; it keeps D1 as 1 if anything was pressed on keyboard.
+    
     
    
+    ; Then, if nothing was pressed, we Branch to end of input handling
     CMPI.B  #0,D1
     BEQ     INPUTEND
     
-    
+    ; if something was pressed, we read the last character using Task 5 
     MOVE.L	#5, D0
     TRAP		#15
     
     
     
 
-    ; Is inputted number 4?
+    ; Was last character 4?
     CMPI.B  #'4', D1
     BEQ     F_WEST
     
-    ; Is inputted number 8?
+    ; Was last character 8?
     CMPI.B  #'8',D1
     BEQ     F_NORTH
     
-    ; Is inputted number 6?
+    ; Was last character 6?
     CMPI.B  #'6',D1
     BEQ     F_EAST
     
-    ; Is inputted number 2?
+    ; Was last character 2?
     CMPI.B  #'2',D1
     BEQ     F_SOUTH
     
+    ; Was last character 5?
     CMPI.B  #'5', D1
     BEQ     F_FLIP
     
@@ -683,6 +689,7 @@ ROW_4           DS.B    5
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
 
 
 

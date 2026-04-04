@@ -1,6 +1,6 @@
 00001000 Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 4/4/2026 10:08:11 PM
+Created On: 4/4/2026 10:26:35 PM
 
 00000000                             1  *-----------------------------------------------------------
 00000000                             2  * Title      : Lights Off - An Assembly Game
@@ -198,495 +198,501 @@ Created On: 4/4/2026 10:08:11 PM
 000011E2  103C 0007                194      MOVE.B  #7, D0
 000011E6  4E4F                     195      TRAP    #15
 000011E8                           196      
-000011E8                           197      
-000011E8                           198     
-000011E8  0C01 0000                199      CMPI.B  #0,D1
-000011EC  6700 002E                200      BEQ     INPUTEND
-000011F0                           201      
-000011F0                           202      
-000011F0  7005                     203      MOVE.L  #5, D0
-000011F2  4E4F                     204      TRAP        #15
-000011F4                           205      
-000011F4                           206      
-000011F4                           207      
-000011F4                           208  
-000011F4                           209      ; Is inputted number 4?
-000011F4  0C01 0034                210      CMPI.B  #'4', D1
-000011F8  6700 0062                211      BEQ     F_WEST
-000011FC                           212      
-000011FC                           213      ; Is inputted number 8?
-000011FC  0C01 0038                214      CMPI.B  #'8',D1
-00001200  6700 0074                215      BEQ     F_NORTH
-00001204                           216      
-00001204                           217      ; Is inputted number 6?
-00001204  0C01 0036                218      CMPI.B  #'6',D1
-00001208  6700 0080                219      BEQ     F_EAST
-0000120C                           220      
-0000120C                           221      ; Is inputted number 2?
-0000120C  0C01 0032                222      CMPI.B  #'2',D1
-00001210  6700 0094                223      BEQ     F_SOUTH
-00001214                           224      
-00001214  0C01 0035                225      CMPI.B  #'5', D1
-00001218  6700 00A4                226      BEQ     F_FLIP
-0000121C                           227      
-0000121C                           228      
-0000121C                           229      INPUTEND:
-0000121C                           230      
-0000121C  4E75                     231      RTS 
-0000121E                           232      
-0000121E                           233      
-0000121E                           234  GAME_WON:   
-0000121E  6100 0124                235      BSR     DISPLAY
-00001222                           236      
-00001222  43F9 00008055            237      LEA     CARRIAGE_RETURN, A1
-00001228  103C 000D                238      MOVE.B  #13, D0
-0000122C  4E4F                     239      TRAP    #15
-0000122E                           240      
-0000122E  43F9 0000804A            241      LEA     VICTORY_MESSAGE, A1
-00001234  103C 000D                242      MOVE.B  #13, D0
-00001238  4E4F                     243      TRAP    #15
-0000123A                           244      
-0000123A  6000 5E14                245      BRA     ENDOFPROG
-0000123E                           246      
-0000123E                           247      
-0000123E                           248  CHECK_GAME_WIN:
-0000123E  4A00                     249      TST.B   D0
-00001240  67DC                     250      BEQ     GAME_WON
-00001242                           251      
-00001242                           252  
-00001242  45F9 00007032            253      LEA     ROW_0, A2
-00001248  D4C0                     254      ADD     D0, A2
-0000124A                           255      
-0000124A  0C12 0001                256      CMPI.B  #1, (A2)
-0000124E  6700 0006                257      BEQ     CONTINUE_PLAYING  
-00001252                           258      
-00001252                           259      
-00001252                           260      
-00001252  5300                     261      SUBI.B  #1, D0
-00001254  60E8                     262      BRA     CHECK_GAME_WIN
-00001256                           263      
-00001256                           264  
-00001256                           265  CONTINUE_PLAYING:
-00001256  1E3C 0001                266      MOVE.B  #1, D7
-0000125A                           267      
-0000125A  60C0                     268      BRA     INPUTEND
-0000125C                           269      
-0000125C                           270  
-0000125C                           271  F_WEST:
-0000125C                           272  
-0000125C  2406                     273      MOVE.L  D6, D2
-0000125E  84FC 0005                274      DIVU    #5, D2
-00001262                           275      ; Masking Quotient of division coz we only need Remainder
-00001262  C47C 0000                276      AND.W   #$0000, D2
-00001266                           277      
-00001266                           278      ; currentPos is leftmost if remainder == 0
-00001266  0C82 00000000            279      CMPI.L  #0, D2
-0000126C                           280      
-0000126C                           281      ; If currentPos not in leftmost, then move left
-0000126C  6600 0004                282      BNE     MOVE_WEST
-00001270                           283      
-00001270  60AA                     284      BRA     INPUTEND
-00001272                           285      
-00001272                           286  MOVE_WEST:
-00001272  5306                     287      SUBI.B   #1, D6
-00001274  60A6                     288      BRA     INPUTEND
-00001276                           289     
-00001276                           290  F_NORTH:
-00001276  2406                     291      MOVE.L  D6, D2
-00001278                           292      
-00001278  84FC 0005                293      DIVU    #5, D2
-0000127C                           294      
-0000127C                           295      ; currentPos is topmost if quotient == 0
-0000127C  0C02 0000                296      CMPI.B  #0, D2
-00001280                           297      
-00001280                           298      ; If currentPos not in topmost, then move up
-00001280  6600 0004                299      BNE     MOVE_NORTH
-00001284                           300      
-00001284  6096                     301      BRA     INPUTEND
-00001286                           302      
-00001286                           303  MOVE_NORTH:
-00001286  5B06                     304      SUBI.B   #5, D6
-00001288  6092                     305      BRA     INPUTEND
-0000128A                           306      
-0000128A                           307  F_EAST:
-0000128A                           308  
-0000128A  2406                     309      MOVE.L  D6, D2
-0000128C  84FC 0005                310      DIVU    #5, D2
-00001290                           311      ; Masking Quotient of division coz we only need Remainder
-00001290  C47C 0000                312      AND.W   #$0000, D2
-00001294                           313      
-00001294                           314      ; currentPos is leftmost if remainder == 4 (grid ranges from 0-4)
-00001294                           315      ; If remainder == 4, then  the only bit active (after masking) would be the 18th  bit.
-00001294                           316      ; This we can test using BTST
-00001294  0802 0012                317      BTST    #18, D2
-00001298                           318      
-00001298                           319      ; If currentPos not in rightmost, then move right
-00001298  6700 0006                320      BEQ     MOVE_EAST
-0000129C                           321      
-0000129C  6000 FF7E                322      BRA     INPUTEND
-000012A0                           323      
-000012A0                           324  MOVE_EAST:
-000012A0  5206                     325      ADD.B   #1, D6
-000012A2  6000 FF78                326      BRA     INPUTEND
-000012A6                           327      
-000012A6                           328  F_SOUTH:
-000012A6  2406                     329      MOVE.L  D6, D2
-000012A8  84FC 0005                330      DIVU    #5, D2
-000012AC                           331      ; currentPos is bottommost if quotient == 4
-000012AC  0C02 0004                332      CMPI.B  #4, D2
-000012B0                           333      
-000012B0                           334      ; If currentPos not in bottommost, then move down
-000012B0  6600 0006                335      BNE     MOVE_SOUTH
-000012B4                           336      
-000012B4  6000 FF66                337      BRA     INPUTEND
-000012B8                           338      
-000012B8                           339  MOVE_SOUTH:
-000012B8  5A06                     340      ADD.B   #5, D6
-000012BA  6000 FF60                341      BRA     INPUTEND
-000012BE                           342      
-000012BE                           343      
-000012BE                           344      
-000012BE                           345  F_FLIP:
-000012BE                           346      ; D0 will have quotient (row) and D1 will have remainder (col)
-000012BE  2006                     347      MOVE.L  D6, D0
-000012C0  80FC 0005                348      DIVU    #5, D0
-000012C4  2200                     349      MOVE.L  D0, D1
-000012C6  4841                     350      SWAP    D1
-000012C8                           351      
-000012C8  45F9 00007032            352      LEA     ROW_0, A2
-000012CE  D4C6                     353      ADD.W    D6, A2
-000012D0                           354      ; fLIP THE CURRENT ONE
-000012D0  0852 0000                355      BCHG    #0,(A2)
-000012D4                           356      
-000012D4                           357      ; flip all that can be flipped
-000012D4  0C01 0000                358      CMPI.B  #0, D1
-000012D8  6600 002A                359      BNE     FLIP_WEST
-000012DC                           360      
-000012DC                           361      THREE_FLIP_LEFT:
-000012DC                           362      
-000012DC  0C00 0000                363      CMPI.B  #0, D0
-000012E0  6600 0032                364      BNE     FLIP_NORTH
-000012E4                           365      
-000012E4                           366      TWO_FLIP_LEFT:
-000012E4                           367      
-000012E4  0C01 0004                368      CMPI.B  #4, D1
-000012E8  6600 003A                369      BNE     FLIP_EAST
-000012EC                           370      
-000012EC                           371      ONE_FLIP_LEFT:
-000012EC                           372      
-000012EC  0C00 0004                373      CMPI.B  #4, D0
-000012F0  6600 0042                374      BNE     FLIP_SOUTH
-000012F4                           375      
-000012F4                           376      NO_FLIP_LEFT:
-000012F4                           377  
-000012F4                           378      
-000012F4                           379      ; Setting up variable for for-loop
-000012F4  4247                     380      CLR     D7
-000012F6  4240                     381      CLR     D0
-000012F8  103C 0018                382      MOVE.B  #24, D0
-000012FC  6000 FF40                383      BRA     CHECK_GAME_WIN
-00001300                           384  
-00001300  6000 FF1A                385      BRA     INPUTEND
-00001304                           386  
-00001304                           387  
-00001304                           388  FLIP_WEST:
-00001304  45F9 00007032            389      LEA     ROW_0, A2
-0000130A  D4C6                     390      ADD.W   D6, A2
-0000130C  534A                     391      SUB.W   #1, A2
-0000130E  0852 0000                392      BCHG    #0, (A2)
-00001312                           393  
-00001312  60C8                     394      BRA THREE_FLIP_LEFT
-00001314                           395      
-00001314                           396  FLIP_NORTH:
-00001314  45F9 00007032            397      LEA     ROW_0, A2
-0000131A  D4C6                     398      ADD.W   D6, A2
-0000131C  5B4A                     399      SUB.W   #5, A2
-0000131E  0852 0000                400      BCHG    #0, (A2)
-00001322                           401      
-00001322  60C0                     402      BRA TWO_FLIP_LEFT
-00001324                           403      
-00001324                           404  FLIP_EAST:
-00001324  45F9 00007032            405      LEA     ROW_0, A2
-0000132A  D4C6                     406      ADD.W   D6, A2
-0000132C  524A                     407      ADD.W   #1, A2
-0000132E  0852 0000                408      BCHG    #0, (A2)
-00001332                           409      
-00001332  60B8                     410      BRA ONE_FLIP_LEFT
-00001334                           411      
-00001334                           412  FLIP_SOUTH:
-00001334  45F9 00007032            413      LEA     ROW_0, A2
-0000133A  D4C6                     414      ADD.W   D6, A2
-0000133C  5A4A                     415      ADD.W   #5, A2
-0000133E  0852 0000                416      BCHG    #0, (A2)
-00001342                           417      
-00001342  60B0                     418      BRA NO_FLIP_LEFT
-00001344                           419      
-00001344                           420      
-00001344                           421      
-00001344                           422      
-00001344                           423      
-00001344                           424  DISPLAY:
-00001344                           425      ; Do all displays
+000011E8                           197      ; First, we put 1 into D1 to indicate that we would like to read keyboard input
+000011E8                           198      ; Then, on running TRAP #15, it clears D1 if nothing in keyboard was pressed and
+000011E8                           199      ; it keeps D1 as 1 if anything was pressed on keyboard.
+000011E8                           200      
+000011E8                           201      
+000011E8                           202     
+000011E8                           203      ; Then, if nothing was pressed, we Branch to end of input handling
+000011E8  0C01 0000                204      CMPI.B  #0,D1
+000011EC  6700 002E                205      BEQ     INPUTEND
+000011F0                           206      
+000011F0                           207      ; if something was pressed, we read the last character using Task 5 
+000011F0  7005                     208      MOVE.L  #5, D0
+000011F2  4E4F                     209      TRAP        #15
+000011F4                           210      
+000011F4                           211      
+000011F4                           212      
+000011F4                           213  
+000011F4                           214      ; Was last character 4?
+000011F4  0C01 0034                215      CMPI.B  #'4', D1
+000011F8  6700 0062                216      BEQ     F_WEST
+000011FC                           217      
+000011FC                           218      ; Was last character 8?
+000011FC  0C01 0038                219      CMPI.B  #'8',D1
+00001200  6700 0074                220      BEQ     F_NORTH
+00001204                           221      
+00001204                           222      ; Was last character 6?
+00001204  0C01 0036                223      CMPI.B  #'6',D1
+00001208  6700 0080                224      BEQ     F_EAST
+0000120C                           225      
+0000120C                           226      ; Was last character 2?
+0000120C  0C01 0032                227      CMPI.B  #'2',D1
+00001210  6700 0094                228      BEQ     F_SOUTH
+00001214                           229      
+00001214                           230      ; Was last character 5?
+00001214  0C01 0035                231      CMPI.B  #'5', D1
+00001218  6700 00A4                232      BEQ     F_FLIP
+0000121C                           233      
+0000121C                           234      
+0000121C                           235      INPUTEND:
+0000121C                           236      
+0000121C  4E75                     237      RTS 
+0000121E                           238      
+0000121E                           239      
+0000121E                           240  GAME_WON:   
+0000121E  6100 0124                241      BSR     DISPLAY
+00001222                           242      
+00001222  43F9 00008055            243      LEA     CARRIAGE_RETURN, A1
+00001228  103C 000D                244      MOVE.B  #13, D0
+0000122C  4E4F                     245      TRAP    #15
+0000122E                           246      
+0000122E  43F9 0000804A            247      LEA     VICTORY_MESSAGE, A1
+00001234  103C 000D                248      MOVE.B  #13, D0
+00001238  4E4F                     249      TRAP    #15
+0000123A                           250      
+0000123A  6000 5E14                251      BRA     ENDOFPROG
+0000123E                           252      
+0000123E                           253      
+0000123E                           254  CHECK_GAME_WIN:
+0000123E  4A00                     255      TST.B   D0
+00001240  67DC                     256      BEQ     GAME_WON
+00001242                           257      
+00001242                           258  
+00001242  45F9 00007032            259      LEA     ROW_0, A2
+00001248  D4C0                     260      ADD     D0, A2
+0000124A                           261      
+0000124A  0C12 0001                262      CMPI.B  #1, (A2)
+0000124E  6700 0006                263      BEQ     CONTINUE_PLAYING  
+00001252                           264      
+00001252                           265      
+00001252                           266      
+00001252  5300                     267      SUBI.B  #1, D0
+00001254  60E8                     268      BRA     CHECK_GAME_WIN
+00001256                           269      
+00001256                           270  
+00001256                           271  CONTINUE_PLAYING:
+00001256  1E3C 0001                272      MOVE.B  #1, D7
+0000125A                           273      
+0000125A  60C0                     274      BRA     INPUTEND
+0000125C                           275      
+0000125C                           276  
+0000125C                           277  F_WEST:
+0000125C                           278  
+0000125C  2406                     279      MOVE.L  D6, D2
+0000125E  84FC 0005                280      DIVU    #5, D2
+00001262                           281      ; Masking Quotient of division coz we only need Remainder
+00001262  C47C 0000                282      AND.W   #$0000, D2
+00001266                           283      
+00001266                           284      ; currentPos is leftmost if remainder == 0
+00001266  0C82 00000000            285      CMPI.L  #0, D2
+0000126C                           286      
+0000126C                           287      ; If currentPos not in leftmost, then move left
+0000126C  6600 0004                288      BNE     MOVE_WEST
+00001270                           289      
+00001270  60AA                     290      BRA     INPUTEND
+00001272                           291      
+00001272                           292  MOVE_WEST:
+00001272  5306                     293      SUBI.B   #1, D6
+00001274  60A6                     294      BRA     INPUTEND
+00001276                           295     
+00001276                           296  F_NORTH:
+00001276  2406                     297      MOVE.L  D6, D2
+00001278                           298      
+00001278  84FC 0005                299      DIVU    #5, D2
+0000127C                           300      
+0000127C                           301      ; currentPos is topmost if quotient == 0
+0000127C  0C02 0000                302      CMPI.B  #0, D2
+00001280                           303      
+00001280                           304      ; If currentPos not in topmost, then move up
+00001280  6600 0004                305      BNE     MOVE_NORTH
+00001284                           306      
+00001284  6096                     307      BRA     INPUTEND
+00001286                           308      
+00001286                           309  MOVE_NORTH:
+00001286  5B06                     310      SUBI.B   #5, D6
+00001288  6092                     311      BRA     INPUTEND
+0000128A                           312      
+0000128A                           313  F_EAST:
+0000128A                           314  
+0000128A  2406                     315      MOVE.L  D6, D2
+0000128C  84FC 0005                316      DIVU    #5, D2
+00001290                           317      ; Masking Quotient of division coz we only need Remainder
+00001290  C47C 0000                318      AND.W   #$0000, D2
+00001294                           319      
+00001294                           320      ; currentPos is leftmost if remainder == 4 (grid ranges from 0-4)
+00001294                           321      ; If remainder == 4, then  the only bit active (after masking) would be the 18th  bit.
+00001294                           322      ; This we can test using BTST
+00001294  0802 0012                323      BTST    #18, D2
+00001298                           324      
+00001298                           325      ; If currentPos not in rightmost, then move right
+00001298  6700 0006                326      BEQ     MOVE_EAST
+0000129C                           327      
+0000129C  6000 FF7E                328      BRA     INPUTEND
+000012A0                           329      
+000012A0                           330  MOVE_EAST:
+000012A0  5206                     331      ADD.B   #1, D6
+000012A2  6000 FF78                332      BRA     INPUTEND
+000012A6                           333      
+000012A6                           334  F_SOUTH:
+000012A6  2406                     335      MOVE.L  D6, D2
+000012A8  84FC 0005                336      DIVU    #5, D2
+000012AC                           337      ; currentPos is bottommost if quotient == 4
+000012AC  0C02 0004                338      CMPI.B  #4, D2
+000012B0                           339      
+000012B0                           340      ; If currentPos not in bottommost, then move down
+000012B0  6600 0006                341      BNE     MOVE_SOUTH
+000012B4                           342      
+000012B4  6000 FF66                343      BRA     INPUTEND
+000012B8                           344      
+000012B8                           345  MOVE_SOUTH:
+000012B8  5A06                     346      ADD.B   #5, D6
+000012BA  6000 FF60                347      BRA     INPUTEND
+000012BE                           348      
+000012BE                           349      
+000012BE                           350      
+000012BE                           351  F_FLIP:
+000012BE                           352      ; D0 will have quotient (row) and D1 will have remainder (col)
+000012BE  2006                     353      MOVE.L  D6, D0
+000012C0  80FC 0005                354      DIVU    #5, D0
+000012C4  2200                     355      MOVE.L  D0, D1
+000012C6  4841                     356      SWAP    D1
+000012C8                           357      
+000012C8  45F9 00007032            358      LEA     ROW_0, A2
+000012CE  D4C6                     359      ADD.W    D6, A2
+000012D0                           360      ; fLIP THE CURRENT ONE
+000012D0  0852 0000                361      BCHG    #0,(A2)
+000012D4                           362      
+000012D4                           363      ; flip all that can be flipped
+000012D4  0C01 0000                364      CMPI.B  #0, D1
+000012D8  6600 002A                365      BNE     FLIP_WEST
+000012DC                           366      
+000012DC                           367      THREE_FLIP_LEFT:
+000012DC                           368      
+000012DC  0C00 0000                369      CMPI.B  #0, D0
+000012E0  6600 0032                370      BNE     FLIP_NORTH
+000012E4                           371      
+000012E4                           372      TWO_FLIP_LEFT:
+000012E4                           373      
+000012E4  0C01 0004                374      CMPI.B  #4, D1
+000012E8  6600 003A                375      BNE     FLIP_EAST
+000012EC                           376      
+000012EC                           377      ONE_FLIP_LEFT:
+000012EC                           378      
+000012EC  0C00 0004                379      CMPI.B  #4, D0
+000012F0  6600 0042                380      BNE     FLIP_SOUTH
+000012F4                           381      
+000012F4                           382      NO_FLIP_LEFT:
+000012F4                           383  
+000012F4                           384      
+000012F4                           385      ; Setting up variable for for-loop
+000012F4  4247                     386      CLR     D7
+000012F6  4240                     387      CLR     D0
+000012F8  103C 0018                388      MOVE.B  #24, D0
+000012FC  6000 FF40                389      BRA     CHECK_GAME_WIN
+00001300                           390  
+00001300  6000 FF1A                391      BRA     INPUTEND
+00001304                           392  
+00001304                           393  
+00001304                           394  FLIP_WEST:
+00001304  45F9 00007032            395      LEA     ROW_0, A2
+0000130A  D4C6                     396      ADD.W   D6, A2
+0000130C  534A                     397      SUB.W   #1, A2
+0000130E  0852 0000                398      BCHG    #0, (A2)
+00001312                           399  
+00001312  60C8                     400      BRA THREE_FLIP_LEFT
+00001314                           401      
+00001314                           402  FLIP_NORTH:
+00001314  45F9 00007032            403      LEA     ROW_0, A2
+0000131A  D4C6                     404      ADD.W   D6, A2
+0000131C  5B4A                     405      SUB.W   #5, A2
+0000131E  0852 0000                406      BCHG    #0, (A2)
+00001322                           407      
+00001322  60C0                     408      BRA TWO_FLIP_LEFT
+00001324                           409      
+00001324                           410  FLIP_EAST:
+00001324  45F9 00007032            411      LEA     ROW_0, A2
+0000132A  D4C6                     412      ADD.W   D6, A2
+0000132C  524A                     413      ADD.W   #1, A2
+0000132E  0852 0000                414      BCHG    #0, (A2)
+00001332                           415      
+00001332  60B8                     416      BRA ONE_FLIP_LEFT
+00001334                           417      
+00001334                           418  FLIP_SOUTH:
+00001334  45F9 00007032            419      LEA     ROW_0, A2
+0000133A  D4C6                     420      ADD.W   D6, A2
+0000133C  5A4A                     421      ADD.W   #5, A2
+0000133E  0852 0000                422      BCHG    #0, (A2)
+00001342                           423      
+00001342  60B0                     424      BRA NO_FLIP_LEFT
+00001344                           425      
 00001344                           426      
-00001344                           427      ;Clear Screen before next draw
-00001344  4241                     428      CLR     D1
-00001346  103C 000B                429      MOVE.B  #11, D0
-0000134A  4E4F                     430      TRAP    #15
-0000134C                           431         
-0000134C  6100 0052                432      BSR DISPLAY_GRID
-00001350                           433      
-00001350  43F9 00008055            434      LEA     CARRIAGE_RETURN, A1
-00001356  103C 000D                435      MOVE.B  #13, D0
-0000135A  4E4F                     436      TRAP    #15
-0000135C                           437      
-0000135C  6100 0004                438      BSR DISPLAY_INPUT
-00001360                           439      
-00001360                           440  
-00001360                           441      
-00001360                           442      
-00001360  4E75                     443      RTS
-00001362                           444  
-00001362                           445  
-00001362                           446  DISPLAY_INPUT:
-00001362                           447      ; Display messages for input
-00001362  43F9 00008000            448      LEA     INPUT_MESSAGE_1, A1
-00001368  103C 000D                449      MOVE.B  #13, D0
-0000136C  4E4F                     450      TRAP    #15
-0000136E                           451      
-0000136E  43F9 0000800E            452      LEA     INPUT_MESSAGE_2, A1
-00001374  103C 000D                453      MOVE.B  #13, D0
-00001378  4E4F                     454      TRAP    #15
-0000137A                           455      
-0000137A  43F9 0000801C            456      LEA     INPUT_MESSAGE_3, A1
-00001380  103C 000D                457      MOVE.B  #13, D0
-00001384  4E4F                     458      TRAP    #15
-00001386                           459      
-00001386  43F9 00008029            460      LEA     INPUT_MESSAGE_4, A1
-0000138C  103C 000D                461      MOVE.B  #13, D0
-00001390  4E4F                     462      TRAP    #15
-00001392                           463      
-00001392  43F9 00008037            464      LEA     INPUT_MESSAGE_5, A1
-00001398  103C 000D                465      MOVE.B  #13, D0
-0000139C  4E4F                     466      TRAP    #15
-0000139E                           467      
-0000139E  4E75                     468      RTS
-000013A0                           469      
-000013A0                           470      
-000013A0                           471      
-000013A0                           472  DISPLAY_GRID:
-000013A0                           473      
-000013A0                           474      ; initialize variables for nested for loop
-000013A0  163C 0000                475      MOVE.B  #0, D3  ; ROW
-000013A4  183C 0000                476      MOVE.B  #0, D4  ; COL
-000013A8                           477       
-000013A8                           478       
-000013A8                           479      OUTER_LOOP:
-000013A8  0C03 0004                480          CMPI.B  #4, D3
-000013AC  6E00 00BA                481          BGT     OUTER_LOOP_END
-000013B0                           482          
-000013B0                           483          FIRST_INNER_LOOP:
-000013B0  0C04 0004                484          CMPI.B  #4, D4
-000013B4  6E00 0070                485          BGT     FIRST_INNER_LOOP_END
-000013B8                           486          
-000013B8  0C03 0000                487          CMPI.B  #0, D3
-000013BC  6700 0106                488          BEQ     LOAD_ROW_0
-000013C0                           489          
-000013C0  0C03 0001                490          CMPI.B  #1, D3
-000013C4  6700 0108                491          BEQ     LOAD_ROW_1
-000013C8                           492          
-000013C8  0C03 0002                493          CMPI.B  #2, D3
-000013CC  6700 010A                494          BEQ     LOAD_ROW_2
-000013D0                           495          
-000013D0  0C03 0003                496          CMPI.B  #3, D3
-000013D4  6700 010C                497          BEQ     LOAD_ROW_3
-000013D8                           498          
-000013D8  0C03 0004                499          CMPI.B  #4, D3
-000013DC  6700 010E                500          BEQ     LOAD_ROW_4
-000013E0                           501          
-000013E0                           502          
-000013E0                           503          RETURN_AFTER_LOADING_ROW:
-000013E0                           504          
-000013E0  143C 0001                505          MOVE.B  #1,D2
-000013E4  4281                     506          CLR.L   D1
-000013E6                           507          
-000013E6  0C04 0000                508          CMPI.B  #0, D4
-000013EA  6700 00B2                509          BEQ     LOAD_COL_0
-000013EE                           510          
-000013EE  0C04 0001                511          CMPI.B  #1, D4
-000013F2  6700 00B0                512          BEQ     LOAD_COL_1
-000013F6                           513          
-000013F6  0C04 0002                514          CMPI.B  #2, D4
-000013FA  6700 00B0                515          BEQ     LOAD_COL_2
-000013FE                           516          
-000013FE  0C04 0003                517          CMPI.B  #3, D4
-00001402  6700 00B0                518          BEQ     LOAD_COL_3
-00001406                           519          
-00001406  0C04 0004                520          CMPI.B  #4, D4
-0000140A  6700 00B0                521          BEQ     LOAD_COL_4
-0000140E                           522          
-0000140E                           523          RETURN_AFTER_LOADING_COL:
-0000140E                           524          
-0000140E  1212                     525          MOVE.B  (A2), D1
-00001410  103C 0014                526          MOVE.B  #20, D0
-00001414  4E4F                     527          TRAP    #15
-00001416                           528          
-00001416  43F9 00008056            529          LEA     SPACE, A1
-0000141C  103C 000E                530          MOVE.B  #14, D0
-00001420  4E4F                     531          TRAP    #15
-00001422                           532          
-00001422                           533          
-00001422  5204                     534          ADDI.B  #1, D4
-00001424  608A                     535          BRA     FIRST_INNER_LOOP
-00001426                           536          
-00001426                           537          FIRST_INNER_LOOP_END:
-00001426  183C 0000                538          MOVE.B  #0, D4
-0000142A                           539          
-0000142A                           540          
-0000142A                           541          
-0000142A  43F9 00008055            542          LEA     CARRIAGE_RETURN, A1
-00001430  103C 000D                543          MOVE.B  #13, D0
-00001434  4E4F                     544          TRAP    #15
-00001436                           545          
-00001436                           546          
-00001436                           547          SECOND_INNER_LOOP:
-00001436  0C04 0004                548          CMPI.B  #4, D4
-0000143A  6E00 0018                549          BGT     SECOND_INNER_LOOP_END
-0000143E                           550          
-0000143E                           551          
-0000143E                           552          ; D0 will be row * 5 + col
-0000143E  103C 0005                553          MOVE.B  #5, D0
-00001442  C0C3                     554          MULU    D3, D0
-00001444  D004                     555          ADD.B   D4, D0
-00001446                           556          
-00001446  BC00                     557          CMP.B   D0, D6
-00001448  6700 0020                558          BEQ     PRINT_UNDERSCORE
-0000144C  6600 0036                559          BNE     PRINT_SPACE
-00001450                           560  
-00001450                           561          
-00001450                           562          CONTINUE_SECOND_INNER_LOOP:      
-00001450                           563          
-00001450  5204                     564          ADDI.B  #1, D4
-00001452  60E2                     565          BRA     SECOND_INNER_LOOP
-00001454                           566          
-00001454                           567          SECOND_INNER_LOOP_END:
-00001454                           568  
-00001454                           569          
-00001454  43F9 00008055            570          LEA     CARRIAGE_RETURN, A1
-0000145A  103C 000D                571          MOVE.B  #13, D0
-0000145E  4E4F                     572          TRAP    #15
-00001460                           573          
-00001460                           574          
-00001460  4204                     575          CLR.B   D4
-00001462  5203                     576          ADDI.B  #1, D3
-00001464  6000 FF42                577          BRA     OUTER_LOOP
-00001468                           578          
-00001468                           579      OUTER_LOOP_END:
-00001468  4E75                     580          RTS
-0000146A                           581    
-0000146A                           582    
-0000146A                           583  PRINT_UNDERSCORE:
-0000146A  43F9 00008058            584      LEA     UNDERSCORE, A1
-00001470  103C 000E                585      MOVE.B  #14, D0
-00001474  4E4F                     586      TRAP    #15
-00001476                           587      
-00001476  43F9 00008056            588      LEA     SPACE, A1
-0000147C  103C 000E                589      MOVE.B  #14, D0
-00001480  4E4F                     590      TRAP    #15
-00001482                           591      
-00001482  60CC                     592      BRA     CONTINUE_SECOND_INNER_LOOP
-00001484                           593      
-00001484                           594  PRINT_SPACE:
-00001484  43F9 00008056            595      LEA     SPACE, A1
-0000148A  103C 000E                596      MOVE.B  #14, D0
-0000148E  4E4F                     597      TRAP    #15
-00001490                           598      
-00001490  43F9 00008056            599      LEA     SPACE, A1
-00001496  103C 000E                600      MOVE.B  #14, D0
-0000149A  4E4F                     601      TRAP    #15
-0000149C                           602      
-0000149C  60B2                     603      BRA     CONTINUE_SECOND_INNER_LOOP
-0000149E                           604    
-0000149E                           605    
-0000149E                           606    
-0000149E                           607  LOAD_COL_0:
-0000149E  45D2                     608      LEA     (A2),A2
-000014A0  6000 FF6C                609      BRA     RETURN_AFTER_LOADING_COL
-000014A4                           610  LOAD_COL_1:
-000014A4  45EA 0001                611      LEA     1(A2),A2
-000014A8  6000 FF64                612      BRA     RETURN_AFTER_LOADING_COL
-000014AC                           613  LOAD_COL_2:
-000014AC  45EA 0002                614      LEA     2(A2),A2
-000014B0  6000 FF5C                615      BRA     RETURN_AFTER_LOADING_COL
-000014B4                           616  LOAD_COL_3:
-000014B4  45EA 0003                617      LEA     3(A2),A2
-000014B8  6000 FF54                618      BRA     RETURN_AFTER_LOADING_COL
-000014BC                           619  LOAD_COL_4:
-000014BC  45EA 0004                620      LEA     4(A2),A2
-000014C0  6000 FF4C                621      BRA     RETURN_AFTER_LOADING_COL
-000014C4                           622      
-000014C4                           623  LOAD_ROW_0:
-000014C4  45F9 00007032            624      LEA     ROW_0, A2
-000014CA  6000 FF14                625      BRA     RETURN_AFTER_LOADING_ROW
-000014CE                           626  LOAD_ROW_1:
-000014CE  45F9 00007037            627      LEA     ROW_1, A2
-000014D4  6000 FF0A                628      BRA     RETURN_AFTER_LOADING_ROW
-000014D8                           629  LOAD_ROW_2:
-000014D8  45F9 0000703C            630      LEA     ROW_2, A2
-000014DE  6000 FF00                631      BRA     RETURN_AFTER_LOADING_ROW
-000014E2                           632  LOAD_ROW_3:
-000014E2  45F9 00007041            633      LEA     ROW_3, A2
-000014E8  6000 FEF6                634      BRA     RETURN_AFTER_LOADING_ROW
-000014EC                           635  LOAD_ROW_4:
-000014EC  45F9 00007046            636      LEA     ROW_4, A2
-000014F2  6000 FEEC                637      BRA     RETURN_AFTER_LOADING_ROW
-000014F6                           638      
-000014F6                           639  
-00008000                           640      ORG $8000
-00008000= 34 20 74 6F 20 67 ...    641  INPUT_MESSAGE_1   DC.B    '4 to go West ',0
-0000800E= 38 20 74 6F 20 67 ...    642  INPUT_MESSAGE_2   DC.B    '8 to go North',0
-0000801C= 36 20 74 6F 20 67 ...    643  INPUT_MESSAGE_3   DC.B    '6 to go East',0
-00008029= 32 20 74 6F 20 67 ...    644  INPUT_MESSAGE_4   DC.B    '2 to go South',0
-00008037= 35 20 74 6F 20 66 ...    645  INPUT_MESSAGE_5   DC.B    '5 to flip switches',0
-0000804A= 59 4F 55 20 57 4F ...    646  VICTORY_MESSAGE   DC.B    'YOU WON!!!',0
-00008055                           647  
-00008055                           648  
-00008055                           649  ; Is this better than printing CR and LF seperately using Task 6?
-00008055                           650  ; Prolly not but have to testt clock cycles to confirm.
-00008055= 00                       651  CARRIAGE_RETURN DC.B    '',0
-00008056= 20 00                    652  SPACE           DC.B    ' ',0
-00008058= 5F 00                    653  UNDERSCORE      DC.B    '_',0
-0000805A                           654  
-0000805A                           655  
-00007000                           656      ORG $7000
-00007000                           657  ; Creating a grid of 25 bytes with values set
-00007000= 00 00 00 00 00           658  GRID_1_ROW_0    DC.B    0,0,0,0,0
-00007005= 00 00 01 00 00           659  GRID_1_ROW_1    DC.B    0,0,1,0,0
-0000700A= 00 01 01 01 00           660  GRID_1_ROW_2    DC.B    0,1,1,1,0
-0000700F= 00 00 01 00 00           661  GRID_1_ROW_3    DC.B    0,0,1,0,0
-00007014= 00 00 00 00 00           662  GRID_1_ROW_4    DC.B    0,0,0,0,0 
-00007019                           663  
-00007019                           664  
-00007019                           665  
-00007019= 00 00 00 00 00           666  GRID_2_ROW_0    DC.B    0,0,0,0,0
-0000701E= 00 00 00 00 00           667  GRID_2_ROW_1    DC.B    0,0,0,0,0
-00007023= 01 00 01 00 01           668  GRID_2_ROW_2    DC.B    1,0,1,0,1
-00007028= 00 00 00 00 00           669  GRID_2_ROW_3    DC.B    0,0,0,0,0
-0000702D= 00 00 00 00 00           670  GRID_2_ROW_4    DC.B    0,0,0,0,0
-00007032                           671  
-00007032                           672      
-00007032                           673  ROW_0           DS.B    5
-00007037                           674  ROW_1           DS.B    5
-0000703C                           675  ROW_2           DS.B    5
-00007041                           676  ROW_3           DS.B    5
-00007046                           677  ROW_4           DS.B    5
-0000704B                           678  
-0000704B                           679  
-0000704B                           680  
-0000704C  FFFF FFFF                681      SIMHALT             ; halt simulator
-00007050                           682  
-00007050                           683  * Put variables and constants here
-00007050                           684  ENDOFPROG:
-00007050                           685      END    START        ; last line of source
+00001344                           427      
+00001344                           428      
+00001344                           429      
+00001344                           430  DISPLAY:
+00001344                           431      ; Do all displays
+00001344                           432      
+00001344                           433      ;Clear Screen before next draw
+00001344  4241                     434      CLR     D1
+00001346  103C 000B                435      MOVE.B  #11, D0
+0000134A  4E4F                     436      TRAP    #15
+0000134C                           437         
+0000134C  6100 0052                438      BSR DISPLAY_GRID
+00001350                           439      
+00001350  43F9 00008055            440      LEA     CARRIAGE_RETURN, A1
+00001356  103C 000D                441      MOVE.B  #13, D0
+0000135A  4E4F                     442      TRAP    #15
+0000135C                           443      
+0000135C  6100 0004                444      BSR DISPLAY_INPUT
+00001360                           445      
+00001360                           446  
+00001360                           447      
+00001360                           448      
+00001360  4E75                     449      RTS
+00001362                           450  
+00001362                           451  
+00001362                           452  DISPLAY_INPUT:
+00001362                           453      ; Display messages for input
+00001362  43F9 00008000            454      LEA     INPUT_MESSAGE_1, A1
+00001368  103C 000D                455      MOVE.B  #13, D0
+0000136C  4E4F                     456      TRAP    #15
+0000136E                           457      
+0000136E  43F9 0000800E            458      LEA     INPUT_MESSAGE_2, A1
+00001374  103C 000D                459      MOVE.B  #13, D0
+00001378  4E4F                     460      TRAP    #15
+0000137A                           461      
+0000137A  43F9 0000801C            462      LEA     INPUT_MESSAGE_3, A1
+00001380  103C 000D                463      MOVE.B  #13, D0
+00001384  4E4F                     464      TRAP    #15
+00001386                           465      
+00001386  43F9 00008029            466      LEA     INPUT_MESSAGE_4, A1
+0000138C  103C 000D                467      MOVE.B  #13, D0
+00001390  4E4F                     468      TRAP    #15
+00001392                           469      
+00001392  43F9 00008037            470      LEA     INPUT_MESSAGE_5, A1
+00001398  103C 000D                471      MOVE.B  #13, D0
+0000139C  4E4F                     472      TRAP    #15
+0000139E                           473      
+0000139E  4E75                     474      RTS
+000013A0                           475      
+000013A0                           476      
+000013A0                           477      
+000013A0                           478  DISPLAY_GRID:
+000013A0                           479      
+000013A0                           480      ; initialize variables for nested for loop
+000013A0  163C 0000                481      MOVE.B  #0, D3  ; ROW
+000013A4  183C 0000                482      MOVE.B  #0, D4  ; COL
+000013A8                           483       
+000013A8                           484       
+000013A8                           485      OUTER_LOOP:
+000013A8  0C03 0004                486          CMPI.B  #4, D3
+000013AC  6E00 00BA                487          BGT     OUTER_LOOP_END
+000013B0                           488          
+000013B0                           489          FIRST_INNER_LOOP:
+000013B0  0C04 0004                490          CMPI.B  #4, D4
+000013B4  6E00 0070                491          BGT     FIRST_INNER_LOOP_END
+000013B8                           492          
+000013B8  0C03 0000                493          CMPI.B  #0, D3
+000013BC  6700 0106                494          BEQ     LOAD_ROW_0
+000013C0                           495          
+000013C0  0C03 0001                496          CMPI.B  #1, D3
+000013C4  6700 0108                497          BEQ     LOAD_ROW_1
+000013C8                           498          
+000013C8  0C03 0002                499          CMPI.B  #2, D3
+000013CC  6700 010A                500          BEQ     LOAD_ROW_2
+000013D0                           501          
+000013D0  0C03 0003                502          CMPI.B  #3, D3
+000013D4  6700 010C                503          BEQ     LOAD_ROW_3
+000013D8                           504          
+000013D8  0C03 0004                505          CMPI.B  #4, D3
+000013DC  6700 010E                506          BEQ     LOAD_ROW_4
+000013E0                           507          
+000013E0                           508          
+000013E0                           509          RETURN_AFTER_LOADING_ROW:
+000013E0                           510          
+000013E0  143C 0001                511          MOVE.B  #1,D2
+000013E4  4281                     512          CLR.L   D1
+000013E6                           513          
+000013E6  0C04 0000                514          CMPI.B  #0, D4
+000013EA  6700 00B2                515          BEQ     LOAD_COL_0
+000013EE                           516          
+000013EE  0C04 0001                517          CMPI.B  #1, D4
+000013F2  6700 00B0                518          BEQ     LOAD_COL_1
+000013F6                           519          
+000013F6  0C04 0002                520          CMPI.B  #2, D4
+000013FA  6700 00B0                521          BEQ     LOAD_COL_2
+000013FE                           522          
+000013FE  0C04 0003                523          CMPI.B  #3, D4
+00001402  6700 00B0                524          BEQ     LOAD_COL_3
+00001406                           525          
+00001406  0C04 0004                526          CMPI.B  #4, D4
+0000140A  6700 00B0                527          BEQ     LOAD_COL_4
+0000140E                           528          
+0000140E                           529          RETURN_AFTER_LOADING_COL:
+0000140E                           530          
+0000140E  1212                     531          MOVE.B  (A2), D1
+00001410  103C 0014                532          MOVE.B  #20, D0
+00001414  4E4F                     533          TRAP    #15
+00001416                           534          
+00001416  43F9 00008056            535          LEA     SPACE, A1
+0000141C  103C 000E                536          MOVE.B  #14, D0
+00001420  4E4F                     537          TRAP    #15
+00001422                           538          
+00001422                           539          
+00001422  5204                     540          ADDI.B  #1, D4
+00001424  608A                     541          BRA     FIRST_INNER_LOOP
+00001426                           542          
+00001426                           543          FIRST_INNER_LOOP_END:
+00001426  183C 0000                544          MOVE.B  #0, D4
+0000142A                           545          
+0000142A                           546          
+0000142A                           547          
+0000142A  43F9 00008055            548          LEA     CARRIAGE_RETURN, A1
+00001430  103C 000D                549          MOVE.B  #13, D0
+00001434  4E4F                     550          TRAP    #15
+00001436                           551          
+00001436                           552          
+00001436                           553          SECOND_INNER_LOOP:
+00001436  0C04 0004                554          CMPI.B  #4, D4
+0000143A  6E00 0018                555          BGT     SECOND_INNER_LOOP_END
+0000143E                           556          
+0000143E                           557          
+0000143E                           558          ; D0 will be row * 5 + col
+0000143E  103C 0005                559          MOVE.B  #5, D0
+00001442  C0C3                     560          MULU    D3, D0
+00001444  D004                     561          ADD.B   D4, D0
+00001446                           562          
+00001446  BC00                     563          CMP.B   D0, D6
+00001448  6700 0020                564          BEQ     PRINT_UNDERSCORE
+0000144C  6600 0036                565          BNE     PRINT_SPACE
+00001450                           566  
+00001450                           567          
+00001450                           568          CONTINUE_SECOND_INNER_LOOP:      
+00001450                           569          
+00001450  5204                     570          ADDI.B  #1, D4
+00001452  60E2                     571          BRA     SECOND_INNER_LOOP
+00001454                           572          
+00001454                           573          SECOND_INNER_LOOP_END:
+00001454                           574  
+00001454                           575          
+00001454  43F9 00008055            576          LEA     CARRIAGE_RETURN, A1
+0000145A  103C 000D                577          MOVE.B  #13, D0
+0000145E  4E4F                     578          TRAP    #15
+00001460                           579          
+00001460                           580          
+00001460  4204                     581          CLR.B   D4
+00001462  5203                     582          ADDI.B  #1, D3
+00001464  6000 FF42                583          BRA     OUTER_LOOP
+00001468                           584          
+00001468                           585      OUTER_LOOP_END:
+00001468  4E75                     586          RTS
+0000146A                           587    
+0000146A                           588    
+0000146A                           589  PRINT_UNDERSCORE:
+0000146A  43F9 00008058            590      LEA     UNDERSCORE, A1
+00001470  103C 000E                591      MOVE.B  #14, D0
+00001474  4E4F                     592      TRAP    #15
+00001476                           593      
+00001476  43F9 00008056            594      LEA     SPACE, A1
+0000147C  103C 000E                595      MOVE.B  #14, D0
+00001480  4E4F                     596      TRAP    #15
+00001482                           597      
+00001482  60CC                     598      BRA     CONTINUE_SECOND_INNER_LOOP
+00001484                           599      
+00001484                           600  PRINT_SPACE:
+00001484  43F9 00008056            601      LEA     SPACE, A1
+0000148A  103C 000E                602      MOVE.B  #14, D0
+0000148E  4E4F                     603      TRAP    #15
+00001490                           604      
+00001490  43F9 00008056            605      LEA     SPACE, A1
+00001496  103C 000E                606      MOVE.B  #14, D0
+0000149A  4E4F                     607      TRAP    #15
+0000149C                           608      
+0000149C  60B2                     609      BRA     CONTINUE_SECOND_INNER_LOOP
+0000149E                           610    
+0000149E                           611    
+0000149E                           612    
+0000149E                           613  LOAD_COL_0:
+0000149E  45D2                     614      LEA     (A2),A2
+000014A0  6000 FF6C                615      BRA     RETURN_AFTER_LOADING_COL
+000014A4                           616  LOAD_COL_1:
+000014A4  45EA 0001                617      LEA     1(A2),A2
+000014A8  6000 FF64                618      BRA     RETURN_AFTER_LOADING_COL
+000014AC                           619  LOAD_COL_2:
+000014AC  45EA 0002                620      LEA     2(A2),A2
+000014B0  6000 FF5C                621      BRA     RETURN_AFTER_LOADING_COL
+000014B4                           622  LOAD_COL_3:
+000014B4  45EA 0003                623      LEA     3(A2),A2
+000014B8  6000 FF54                624      BRA     RETURN_AFTER_LOADING_COL
+000014BC                           625  LOAD_COL_4:
+000014BC  45EA 0004                626      LEA     4(A2),A2
+000014C0  6000 FF4C                627      BRA     RETURN_AFTER_LOADING_COL
+000014C4                           628      
+000014C4                           629  LOAD_ROW_0:
+000014C4  45F9 00007032            630      LEA     ROW_0, A2
+000014CA  6000 FF14                631      BRA     RETURN_AFTER_LOADING_ROW
+000014CE                           632  LOAD_ROW_1:
+000014CE  45F9 00007037            633      LEA     ROW_1, A2
+000014D4  6000 FF0A                634      BRA     RETURN_AFTER_LOADING_ROW
+000014D8                           635  LOAD_ROW_2:
+000014D8  45F9 0000703C            636      LEA     ROW_2, A2
+000014DE  6000 FF00                637      BRA     RETURN_AFTER_LOADING_ROW
+000014E2                           638  LOAD_ROW_3:
+000014E2  45F9 00007041            639      LEA     ROW_3, A2
+000014E8  6000 FEF6                640      BRA     RETURN_AFTER_LOADING_ROW
+000014EC                           641  LOAD_ROW_4:
+000014EC  45F9 00007046            642      LEA     ROW_4, A2
+000014F2  6000 FEEC                643      BRA     RETURN_AFTER_LOADING_ROW
+000014F6                           644      
+000014F6                           645  
+00008000                           646      ORG $8000
+00008000= 34 20 74 6F 20 67 ...    647  INPUT_MESSAGE_1   DC.B    '4 to go West ',0
+0000800E= 38 20 74 6F 20 67 ...    648  INPUT_MESSAGE_2   DC.B    '8 to go North',0
+0000801C= 36 20 74 6F 20 67 ...    649  INPUT_MESSAGE_3   DC.B    '6 to go East',0
+00008029= 32 20 74 6F 20 67 ...    650  INPUT_MESSAGE_4   DC.B    '2 to go South',0
+00008037= 35 20 74 6F 20 66 ...    651  INPUT_MESSAGE_5   DC.B    '5 to flip switches',0
+0000804A= 59 4F 55 20 57 4F ...    652  VICTORY_MESSAGE   DC.B    'YOU WON!!!',0
+00008055                           653  
+00008055                           654  
+00008055                           655  ; Is this better than printing CR and LF seperately using Task 6?
+00008055                           656  ; Prolly not but have to testt clock cycles to confirm.
+00008055= 00                       657  CARRIAGE_RETURN DC.B    '',0
+00008056= 20 00                    658  SPACE           DC.B    ' ',0
+00008058= 5F 00                    659  UNDERSCORE      DC.B    '_',0
+0000805A                           660  
+0000805A                           661  
+00007000                           662      ORG $7000
+00007000                           663  ; Creating a grid of 25 bytes with values set
+00007000= 00 00 00 00 00           664  GRID_1_ROW_0    DC.B    0,0,0,0,0
+00007005= 00 00 01 00 00           665  GRID_1_ROW_1    DC.B    0,0,1,0,0
+0000700A= 00 01 01 01 00           666  GRID_1_ROW_2    DC.B    0,1,1,1,0
+0000700F= 00 00 01 00 00           667  GRID_1_ROW_3    DC.B    0,0,1,0,0
+00007014= 00 00 00 00 00           668  GRID_1_ROW_4    DC.B    0,0,0,0,0 
+00007019                           669  
+00007019                           670  
+00007019                           671  
+00007019= 00 00 00 00 00           672  GRID_2_ROW_0    DC.B    0,0,0,0,0
+0000701E= 00 00 00 00 00           673  GRID_2_ROW_1    DC.B    0,0,0,0,0
+00007023= 01 00 01 00 01           674  GRID_2_ROW_2    DC.B    1,0,1,0,1
+00007028= 00 00 00 00 00           675  GRID_2_ROW_3    DC.B    0,0,0,0,0
+0000702D= 00 00 00 00 00           676  GRID_2_ROW_4    DC.B    0,0,0,0,0
+00007032                           677  
+00007032                           678      
+00007032                           679  ROW_0           DS.B    5
+00007037                           680  ROW_1           DS.B    5
+0000703C                           681  ROW_2           DS.B    5
+00007041                           682  ROW_3           DS.B    5
+00007046                           683  ROW_4           DS.B    5
+0000704B                           684  
+0000704B                           685  
+0000704B                           686  
+0000704C  FFFF FFFF                687      SIMHALT             ; halt simulator
+00007050                           688  
+00007050                           689  * Put variables and constants here
+00007050                           690  ENDOFPROG:
+00007050                           691      END    START        ; last line of source
 
 No errors detected
 No warnings generated
