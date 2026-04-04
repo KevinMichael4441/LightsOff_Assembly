@@ -8,7 +8,32 @@
 START:                  ; first instruction of program
 
 * Put program code here
+    
+    ;Randoomly choosing the grid to play on
+    
+    ; Time in seconds since midnight
+    MOVE.B  #8, D0
+    TRAP #15
+    
+    ; mask upper bits for division to happen (it needs W size)
+    AND.L   #$0000FFFF, D1
+    DIVU    #10, D1
+    
+    ; MASK quotient (we only need remainder)
+    AND.L   #$FFFF0000, D1
+    SWAP    D1
+    ; Now, D1 should have 0-9
+    
+    ; Branch based on remainder value
+    CMPI.B  #4, D1
+    BGT ASSIGN_GRID_1
+    
+    BRA ASSIGN_GRID_2
 
+
+
+    RETURN_AFTER_DECIDING_GRID:
+    
     ; D7 being 1 is the condition for the while loop to run
     MOVE.B  #1, D7
     
@@ -18,7 +43,120 @@ START:                  ; first instruction of program
     ; Start the loop if condition satisfies
     CMPI.B  #1, D7
     BEQ     WHILE_LOOP
+    
+    
 
+
+    
+    
+ASSIGN_GRID_1:
+    
+    LEA         GRID_1_ROW_0, A0
+    LEA         ROW_0, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    
+    LEA         GRID_1_ROW_1, A0
+    LEA         ROW_1, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    
+    LEA         GRID_1_ROW_2, A0
+    LEA         ROW_2, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    
+    
+    LEA         GRID_1_ROW_3, A0
+    LEA         ROW_3, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    
+    
+    LEA         GRID_1_ROW_4, A0
+    LEA         ROW_4, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    
+    
+    BRA         RETURN_AFTER_DECIDING_GRID
+    
+
+
+ASSIGN_GRID_2:
+    LEA         GRID_2_ROW_0, A0
+    LEA         ROW_0, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_2_ROW_1, A0
+    LEA         ROW_1, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_2_ROW_2, A0
+    LEA         ROW_2, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_2_ROW_3, A0
+    LEA         ROW_3, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_2_ROW_4, A0
+    LEA         ROW_4, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    
+    BRA     RETURN_AFTER_DECIDING_GRID
+    
 
 WHILE_LOOP:
     ; Is loop condition true?
@@ -48,6 +186,7 @@ F_FLIP:
     ; fLIP THE CURRENT ONE
     BCHG    #0,(A2)
     
+    ; flip all that can be flipped
     CMPI.B  #0, D1
     BNE     FLIP_WEST
     
@@ -482,13 +621,27 @@ UNDERSCORE      DC.B    '_',0
 
 
     ORG $7000
-; Creating a grid of 25 bytes with values set to 0
-ROW_0 DC.B 0,0,0,0,0
-ROW_1 DC.B 0,0,1,0,0
-ROW_2 DC.B 0,1,1,1,0
-ROW_3 DC.B 0,0,1,0,0
-ROW_4 DC.B 0,0,0,0,0 
+; Creating a grid of 25 bytes with values set
+GRID_1_ROW_0    DC.B    0,0,0,0,0
+GRID_1_ROW_1    DC.B    0,0,1,0,0
+GRID_1_ROW_2    DC.B    0,1,1,1,0
+GRID_1_ROW_3    DC.B    0,0,1,0,0
+GRID_1_ROW_4    DC.B    0,0,0,0,0 
 
+
+
+GRID_2_ROW_0    DC.B    0,0,0,0,0
+GRID_2_ROW_1    DC.B    0,0,0,0,0
+GRID_2_ROW_2    DC.B    1,0,1,0,1
+GRID_2_ROW_3    DC.B    0,0,0,0,0
+GRID_2_ROW_4    DC.B    0,0,0,0,0
+
+    
+ROW_0           DS.B    5
+ROW_1           DS.B    5
+ROW_2           DS.B    5
+ROW_3           DS.B    5
+ROW_4           DS.B    5
 
 
 
@@ -497,6 +650,9 @@ ROW_4 DC.B 0,0,0,0,0
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
+
+
 
 
 
