@@ -9,9 +9,21 @@ START:                  ; first instruction of program
 
 * Put program code here
     
-    ;Randoomly choosing the grid to play on
     
-    ; Time in seconds since midnight
+    ; To turn off keyboard echo
+    MOVE.B		#0, D1
+    MOVE.B		#12, d0
+	TRAP		#15
+    
+    ; Setting font color
+    MOVE.L  #$000FFF00, D1
+    MOVE.B  #21, D0
+    TRAP    #15
+    
+    
+    
+    ; Randoomly choosing the grid to play on
+    ; using ime in 1/100 seconds since midnight:
     MOVE.B  #8, D0
     TRAP #15
     
@@ -163,6 +175,7 @@ WHILE_LOOP:
     TST.B   D7
     BEQ     ENDOFPROG
     
+    
     ; Sub-Routine to Display on screen
     BSR     DISPLAY
     
@@ -172,6 +185,161 @@ WHILE_LOOP:
     
     ; Run it again
     BRA     WHILE_LOOP
+    
+    
+UPDATE:
+    
+    ; Input number into D1
+    MOVE.B  #1, D1
+    MOVE.B  #7, D0
+    TRAP    #15
+    
+    
+   
+    CMPI.B  #0,D1
+    BEQ     INPUTEND
+    
+    
+    MOVE.L	#5, D0
+    TRAP		#15
+    
+    
+    
+
+    ; Is inputted number 4?
+    CMPI.B  #'4', D1
+    BEQ     F_WEST
+    
+    ; Is inputted number 8?
+    CMPI.B  #'8',D1
+    BEQ     F_NORTH
+    
+    ; Is inputted number 6?
+    CMPI.B  #'6',D1
+    BEQ     F_EAST
+    
+    ; Is inputted number 2?
+    CMPI.B  #'2',D1
+    BEQ     F_SOUTH
+    
+    CMPI.B  #'5', D1
+    BEQ     F_FLIP
+    
+    
+    INPUTEND:
+    
+    RTS 
+    
+    
+GAME_WON:   
+    BSR     DISPLAY
+    
+    LEA     CARRIAGE_RETURN, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    LEA     VICTORY_MESSAGE, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    BRA     ENDOFPROG
+    
+    
+CHECK_GAME_WIN:
+    TST.B   D0
+    BEQ     GAME_WON
+    
+
+    LEA     ROW_0, A2
+    ADD     D0, A2
+    
+    CMPI.B  #1, (A2)
+    BEQ     CONTINUE_PLAYING  
+    
+    
+    
+    SUBI.B  #1, D0
+    BRA     CHECK_GAME_WIN
+    
+
+CONTINUE_PLAYING:
+    MOVE.B  #1, D7
+    
+    BRA     INPUTEND
+    
+
+F_WEST:
+
+    MOVE.L  D6, D2
+    DIVU    #5, D2
+    ; Masking Quotient of division coz we only need Remainder
+    AND.W   #$0000, D2
+    
+    ; currentPos is leftmost if remainder == 0
+    CMPI.L  #0, D2
+    
+    ; If currentPos not in leftmost, then move left
+    BNE     MOVE_WEST
+    
+    BRA     INPUTEND
+    
+MOVE_WEST:
+    SUBI.B   #1, D6
+    BRA     INPUTEND
+   
+F_NORTH:
+    MOVE.L  D6, D2
+    
+    DIVU    #5, D2
+    
+    ; currentPos is topmost if quotient == 0
+    CMPI.B  #0, D2
+    
+    ; If currentPos not in topmost, then move up
+    BNE     MOVE_NORTH
+    
+    BRA     INPUTEND
+    
+MOVE_NORTH:
+    SUBI.B   #5, D6
+    BRA     INPUTEND
+    
+F_EAST:
+
+    MOVE.L  D6, D2
+    DIVU    #5, D2
+    ; Masking Quotient of division coz we only need Remainder
+    AND.W   #$0000, D2
+    
+    ; currentPos is leftmost if remainder == 4 (grid ranges from 0-4)
+    ; If remainder == 4, then  the only bit active (after masking) would be the 18th  bit.
+    ; This we can test using BTST
+    BTST    #18, D2
+    
+    ; If currentPos not in rightmost, then move right
+    BEQ     MOVE_EAST
+    
+    BRA     INPUTEND
+    
+MOVE_EAST:
+    ADD.B   #1, D6
+    BRA     INPUTEND
+    
+F_SOUTH:
+    MOVE.L  D6, D2
+    DIVU    #5, D2
+    ; currentPos is bottommost if quotient == 4
+    CMPI.B  #4, D2
+    
+    ; If currentPos not in bottommost, then move down
+    BNE     MOVE_SOUTH
+    
+    BRA     INPUTEND
+    
+MOVE_SOUTH:
+    ADD.B   #5, D6
+    BRA     INPUTEND
+    
     
     
 F_FLIP:
@@ -214,45 +382,8 @@ F_FLIP:
     MOVE.B  #24, D0
     BRA     CHECK_GAME_WIN
 
-    BRA     WHILE_LOOP
-    
+    BRA     INPUTEND
 
-GAME_WON:   
-    BSR     DISPLAY
-    
-    LEA     CARRIAGE_RETURN, A1
-    MOVE.B  #13, D0
-    TRAP    #15
-    
-    LEA     VICTORY_MESSAGE, A1
-    MOVE.B  #13, D0
-    TRAP    #15
-    
-    BRA     ENDOFPROG
-    
-    
-CHECK_GAME_WIN:
-    TST.B   D0
-    BEQ     GAME_WON
-    
-
-    LEA     ROW_0, A2
-    ADD     D0, A2
-    
-    CMPI.B  #1, (A2)
-    BEQ     CONTINUE_PLAYING  
-    
-    
-    
-    SUBI.B  #1, D0
-    BRA     CHECK_GAME_WIN
-    
-
-CONTINUE_PLAYING:
-    MOVE.B  #1, D7
-    
-    BRA     WHILE_LOOP
-    
 
 FLIP_WEST:
     LEA     ROW_0, A2
@@ -286,92 +417,27 @@ FLIP_SOUTH:
     
     BRA NO_FLIP_LEFT
     
-
-F_WEST:
-
-    MOVE.L  D6, D2
-    DIVU    #5, D2
-    ; Masking Quotient of division coz we only need Remainder
-    AND.W   #$0000, D2
     
-    ; currentPos is leftmost if remainder == 0
-    CMPI.L  #0, D2
     
-    ; If currentPos not in leftmost, then move left
-    BNE     MOVE_WEST
-    
-    BRA     WHILE_LOOP
-    
-MOVE_WEST:
-    SUBI.B   #1, D6
-    BRA     WHILE_LOOP
-   
-F_NORTH:
-    MOVE.L  D6, D2
-    
-    DIVU    #5, D2
-    
-    ; currentPos is topmost if quotient == 0
-    CMPI.B  #0, D2
-    
-    ; If currentPos not in topmost, then move up
-    BNE     MOVE_NORTH
-    
-    BRA     WHILE_LOOP
-    
-MOVE_NORTH:
-    SUBI.B   #5, D6
-    BRA     WHILE_LOOP
-    
-F_EAST:
-
-    MOVE.L  D6, D2
-    DIVU    #5, D2
-    ; Masking Quotient of division coz we only need Remainder
-    AND.W   #$0000, D2
-    
-    ; currentPos is leftmost if remainder == 4 (grid ranges from 0-4)
-    ; If remainder == 4, then  the only bit active (after masking) would be the 18th  bit.
-    ; This we can test using BTST
-    BTST    #18, D2
-    
-    ; If currentPos not in rightmost, then move right
-    BEQ     MOVE_EAST
-    
-    BRA     WHILE_LOOP
-    
-MOVE_EAST:
-    ADD.B   #1, D6
-    BRA     WHILE_LOOP
-    
-F_SOUTH:
-    MOVE.L  D6, D2
-    DIVU    #5, D2
-    ; currentPos is bottommost if quotient == 4
-    CMPI.B  #4, D2
-    
-    ; If currentPos not in bottommost, then move down
-    BNE     MOVE_SOUTH
-    
-    BRA     WHILE_LOOP
-    
-MOVE_SOUTH:
-    ADD.B   #5, D6
-    BRA     WHILE_LOOP
     
     
 DISPLAY:
     ; Do all displays
     
     ;Clear Screen before next draw
-    MOVE.W  #$FF00, D1
+    CLR     D1
     MOVE.B  #11, D0
     TRAP    #15
        
+    BSR DISPLAY_GRID
+    
+    LEA     CARRIAGE_RETURN, A1
+    MOVE.B  #13, D0
+    TRAP    #15
     
     BSR DISPLAY_INPUT
     
-    BSR DISPLAY_GRID
+
     
     
     RTS
@@ -396,10 +462,6 @@ DISPLAY_INPUT:
     TRAP    #15
     
     LEA     INPUT_MESSAGE_5, A1
-    MOVE.B  #13, D0
-    TRAP    #15
-    
-    LEA     CARRIAGE_RETURN, A1
     MOVE.B  #13, D0
     TRAP    #15
     
@@ -574,35 +636,6 @@ LOAD_ROW_4:
     LEA     ROW_4, A2
     BRA     RETURN_AFTER_LOADING_ROW
     
-    
-UPDATE:
-    ; Input number into D1
-    MOVE.B  #4, D0
-    TRAP    #15
-    
-    
-    ; Is inputted number 4?
-    CMPI.B  #4,D1
-    BEQ     F_WEST
-    
-    ; Is inputted number 8?
-    CMPI.B  #8,D1
-    BEQ     F_NORTH
-    
-    ; Is inputted number 6?
-    CMPI.B  #6,D1
-    BEQ     F_EAST
-    
-    ; Is inputted number 2?
-    CMPI.B  #2,D1
-    BEQ     F_SOUTH
-    
-    CMPI.B  #5, D1
-    BEQ     F_FLIP
-    
-    
-    RTS 
-    
 
     ORG $8000
 INPUT_MESSAGE_1   DC.B    '4 to go West ',0
@@ -650,6 +683,7 @@ ROW_4           DS.B    5
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
 
 
 
