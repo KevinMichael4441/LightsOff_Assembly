@@ -120,10 +120,8 @@ DISPLAY:
     
     BSR DISPLAY_INPUT
     
+    BSR DISPLAY_GRID
     
-    MOVE.L  D6, D1
-    MOVE.B  #3, D0
-    TRAP    #15
     
     RTS
 
@@ -155,6 +153,186 @@ DISPLAY_INPUT:
     TRAP    #15
     
     RTS
+    
+    
+    
+DISPLAY_GRID:
+    
+    ; initialize variables for nested for loop
+    MOVE.B  #0, D3  ; ROW
+    MOVE.B  #0, D4  ; COL
+     
+     
+    OUTER_LOOP:
+        CMPI.B  #4, D3
+        BGT     OUTER_LOOP_END
+        
+        FIRST_INNER_LOOP:
+        CMPI.B  #4, D4
+        BGT     FIRST_INNER_LOOP_END
+        
+        CMPI.B  #0, D3
+        BEQ     LOAD_ROW_0
+        
+        CMPI.B  #1, D3
+        BEQ     LOAD_ROW_1
+        
+        CMPI.B  #2, D3
+        BEQ     LOAD_ROW_2
+        
+        CMPI.B  #3, D3
+        BEQ     LOAD_ROW_3
+        
+        CMPI.B  #4, D3
+        BEQ     LOAD_ROW_4
+        
+        
+        RETURN_AFTER_LOADING_ROW:
+        
+        MOVE.B  #1,D2
+        CLR.L   D1
+        
+        CMPI.B  #0, D4
+        BEQ     LOAD_COL_0
+        
+        CMPI.B  #1, D4
+        BEQ     LOAD_COL_1
+        
+        CMPI.B  #2, D4
+        BEQ     LOAD_COL_2
+        
+        CMPI.B  #3, D4
+        BEQ     LOAD_COL_3
+        
+        CMPI.B  #4, D4
+        BEQ     LOAD_COL_4
+        
+        RETURN_AFTER_LOADING_COL:
+        
+        MOVE.B  (A2), D1
+        MOVE.B  #20, D0
+        TRAP    #15
+        
+        LEA     SPACE, A1
+        MOVE.B  #14, D0
+        TRAP    #15
+        
+        
+        ADDI.B  #1, D4
+        BRA     FIRST_INNER_LOOP
+        
+        FIRST_INNER_LOOP_END:
+        MOVE.B  #0, D4
+        
+        
+        
+        LEA     CARRIAGE_RETURN, A1
+        MOVE.B  #13, D0
+        TRAP    #15
+        
+        
+        SECOND_INNER_LOOP:
+        CMPI.B  #4, D4
+        BGT     SECOND_INNER_LOOP_END
+        
+        
+        ; D0 will be row * 5 + col
+        MOVE.B  #5, D0
+        MULU    D3, D0
+        ADD.B   D4, D0
+        
+        CMP.B   D0, D6
+        BEQ     PRINT_UNDERSCORE
+        BNE     PRINT_SPACE
+
+        
+        CONTINUE_SECOND_INNER_LOOP:      
+        
+        ADDI.B  #1, D4
+        BRA     SECOND_INNER_LOOP
+        
+        SECOND_INNER_LOOP_END:
+
+        
+        LEA     CARRIAGE_RETURN, A1
+        MOVE.B  #13, D0
+        TRAP    #15
+        
+        
+        CLR.B   D4
+        ADDI.B  #1, D3
+        BRA     OUTER_LOOP
+        
+    OUTER_LOOP_END:
+        RTS
+  
+  
+PRINT_UNDERSCORE:
+    LEA     UNDERSCORE, A1
+    MOVE.B  #14, D0
+    TRAP    #15
+    
+    LEA     SPACE, A1
+    MOVE.B  #14, D0
+    TRAP    #15
+    
+    BRA     CONTINUE_SECOND_INNER_LOOP
+    
+PRINT_SPACE:
+    LEA     SPACE, A1
+    MOVE.B  #14, D0
+    TRAP    #15
+    
+    LEA     SPACE, A1
+    MOVE.B  #14, D0
+    TRAP    #15
+    
+    BRA     CONTINUE_SECOND_INNER_LOOP
+  
+  
+  
+LOAD_COL_0:
+    LEA     (A2),A2
+    BRA     RETURN_AFTER_LOADING_COL
+LOAD_COL_1:
+    LEA     1(A2),A2
+    BRA     RETURN_AFTER_LOADING_COL
+LOAD_COL_2:
+    LEA     2(A2),A2
+    BRA     RETURN_AFTER_LOADING_COL
+LOAD_COL_3:
+    LEA     3(A2),A2
+    BRA     RETURN_AFTER_LOADING_COL
+LOAD_COL_4:
+    LEA     4(A2),A2
+    BRA     RETURN_AFTER_LOADING_COL
+    
+LOAD_ROW_0:
+    LEA     ROW_0, A2
+    BRA     RETURN_AFTER_LOADING_ROW
+LOAD_ROW_1:
+    LEA     ROW_1, A2
+    BRA     RETURN_AFTER_LOADING_ROW
+LOAD_ROW_2:
+    LEA     ROW_2, A2
+    BRA     RETURN_AFTER_LOADING_ROW
+LOAD_ROW_3:
+    LEA     ROW_3, A2
+    BRA     RETURN_AFTER_LOADING_ROW
+LOAD_ROW_4:
+    LEA     ROW_4, A2
+    BRA     RETURN_AFTER_LOADING_ROW
+
+FOR_ROW_DISPLAY:
+    CMP.B   #5, D3
+    BLT     FOR_COL_DISPLAY
+    
+    MOVE.B  #0, D4
+    ADDQ.B  #1, D3  
+    
+    CMPI.B  #5, D3
+
+FOR_COL_DISPLAY:
     
     
 UPDATE:
@@ -194,17 +372,27 @@ INPUT_MESSAGE_5   DC.B    '5 to flip switches',0
 ; Is this better than printing CR and LF seperately using Task 6?
 ; Prolly not but have to testt clock cycles to confirm.
 CARRIAGE_RETURN DC.B    '',0
+SPACE           DC.B    ' ',0
+UNDERSCORE      DC.B    '_',0
+
+
+    ORG $7000
+; Creating a grid of 25 bytes with values set to 0
+ROW_0 DC.B 0,0,0,0,0
+ROW_1 DC.B 0,0,0,0,0
+ROW_2 DC.B 1,0,1,0,1
+ROW_3 DC.B 0,0,0,0,0
+ROW_4 DC.B 0,0,0,0,0 
 
 
 
-M_ONE   DC.B    'U entered ONE!',0
-M_TWO   DC.B    'U entered TWO!',0
 
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
 
 
 
