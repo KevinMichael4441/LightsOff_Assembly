@@ -62,7 +62,6 @@ START:                  ; first instruction of program
     
     
 ASSIGN_GRID_1:
-    
     LEA         GRID_1_ROW_0, A0
     LEA         ROW_0, A1
     
@@ -71,7 +70,6 @@ ASSIGN_GRID_1:
     MOVE.B      2(A0), 2(A1)
     MOVE.B      3(A0), 3(A1)
     MOVE.B      4(A0), 4(A1)
-    
     
     LEA         GRID_1_ROW_1, A0
     LEA         ROW_1, A1
@@ -82,7 +80,6 @@ ASSIGN_GRID_1:
     MOVE.B      3(A0), 3(A1)
     MOVE.B      4(A0), 4(A1)
     
-    
     LEA         GRID_1_ROW_2, A0
     LEA         ROW_2, A1
     
@@ -91,8 +88,6 @@ ASSIGN_GRID_1:
     MOVE.B      2(A0), 2(A1)
     MOVE.B      3(A0), 3(A1)
     MOVE.B      4(A0), 4(A1)
-    
-    
     
     LEA         GRID_1_ROW_3, A0
     LEA         ROW_3, A1
@@ -103,8 +98,6 @@ ASSIGN_GRID_1:
     MOVE.B      3(A0), 3(A1)
     MOVE.B      4(A0), 4(A1)
     
-    
-    
     LEA         GRID_1_ROW_4, A0
     LEA         ROW_4, A1
     
@@ -113,8 +106,6 @@ ASSIGN_GRID_1:
     MOVE.B      2(A0), 2(A1)
     MOVE.B      3(A0), 3(A1)
     MOVE.B      4(A0), 4(A1)
-    
-    
     
     BRA         RETURN_AFTER_DECIDING_GRID
     
@@ -423,9 +414,7 @@ FLIP_SOUTH:
     
     BRA NO_FLIP_LEFT
     
-    
-    
-    
+       
     
 DISPLAY:
     ; Do all displays
@@ -433,6 +422,13 @@ DISPLAY:
     ;Clear Screen before next draw
     CLR     D1
     MOVE.B  #11, D0
+    TRAP    #15
+    
+    
+    BSR DISPLAY_NAME
+    
+    LEA     CARRIAGE_RETURN, A1
+    MOVE.B  #13, D0
     TRAP    #15
        
     BSR DISPLAY_GRID
@@ -445,6 +441,25 @@ DISPLAY:
     
 
     
+    
+    RTS
+    
+    
+    
+    
+DISPLAY_NAME:
+    ; Display messages for input
+    LEA     LINES, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    LEA     GAME_NAME, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    LEA     LINES, A1
+    MOVE.B  #13, D0
+    TRAP    #15
     
     RTS
 
@@ -644,13 +659,16 @@ LOAD_ROW_4:
     
 
     ORG $8000
-INPUT_MESSAGE_1   DC.B    '4 to go West ',0
-INPUT_MESSAGE_2   DC.B    '8 to go North',0
-INPUT_MESSAGE_3   DC.B    '6 to go East',0
-INPUT_MESSAGE_4   DC.B    '2 to go South',0
-INPUT_MESSAGE_5   DC.B    '5 to flip switches',0
-VICTORY_MESSAGE   DC.B    'YOU WON!!!',0
+INPUT_MESSAGE_1     DC.B    '4 to go West ',0
+INPUT_MESSAGE_2     DC.B    '8 to go North',0
+INPUT_MESSAGE_3     DC.B    '6 to go East',0
+INPUT_MESSAGE_4     DC.B    '2 to go South',0
+INPUT_MESSAGE_5     DC.B    '5 to flip switches',0
+VICTORY_MESSAGE     DC.B    'YOU WON!!!',0
 
+
+LINES               DC.B    '---------------------------------------',0
+GAME_NAME           DC.B    '  LIGHTS OFF - Flip all switches to 0  ',0
 
 ; Is this better than printing CR and LF seperately using Task 6?
 ; Prolly not but have to testt clock cycles to confirm.
@@ -661,13 +679,11 @@ UNDERSCORE      DC.B    '_',0
 
     ORG $7000
 ; Creating a grid of 25 bytes with values set
-GRID_1_ROW_0    DC.B    0,0,0,0,0
-GRID_1_ROW_1    DC.B    0,0,1,0,0
-GRID_1_ROW_2    DC.B    0,1,1,1,0
-GRID_1_ROW_3    DC.B    0,0,1,0,0
-GRID_1_ROW_4    DC.B    0,0,0,0,0 
-
-
+GRID_1_ROW_0    DC.B    1,0,0,0,1
+GRID_1_ROW_1    DC.B    0,1,0,1,0
+GRID_1_ROW_2    DC.B    0,0,1,0,0
+GRID_1_ROW_3    DC.B    0,1,0,1,0
+GRID_1_ROW_4    DC.B    1,0,0,0,1 
 
 GRID_2_ROW_0    DC.B    0,0,0,0,0
 GRID_2_ROW_1    DC.B    0,0,0,0,0
@@ -675,7 +691,6 @@ GRID_2_ROW_2    DC.B    1,0,1,0,1
 GRID_2_ROW_3    DC.B    0,0,0,0,0
 GRID_2_ROW_4    DC.B    0,0,0,0,0
 
-    
 ROW_0           DS.B    5
 ROW_1           DS.B    5
 ROW_2           DS.B    5
@@ -688,7 +703,10 @@ ROW_4           DS.B    5
 
 * Put variables and constants here
 ENDOFPROG:
-    END    START        ; last line of source
+    END    START        ; last line of source                            :)
+
+
+
 
 
 
