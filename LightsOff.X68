@@ -16,20 +16,20 @@ START:                  ; first instruction of program
 	TRAP		#15    
     
     ; Randoomly choosing the grid to play on
-    ; using ime in 1/100 seconds since midnight:
+    ; using time in 1/100 seconds since midnight:
     MOVE.B      #8, D0
     TRAP #15
     
-    ; mask upper bits for division to happen (it needs W size)
+    ; mask upper bits for division to happen (it needs exactly W size)
     AND.L   #$0000FFFF, D1
     DIVU    #10, D1
     
     ; MASK quotient (we only need remainder)
     AND.L   #$FFFF0000, D1
     SWAP    D1
-    ; Now, D1 should have 0-9
+    ; Now, D1 should have a value 0-9
     
-    ; Branch based on remainder value
+    ; Branch based on said value
     CMPI.B  #4, D1
     BGT ASSIGN_GRID_1
     
@@ -39,11 +39,11 @@ START:                  ; first instruction of program
 
     RETURN_AFTER_DECIDING_GRID:
     
-    ; D7 being 1 is the condition for the while loop to run
+    ; D7 being #1 is the condition for the while loop to run so we set the first bit
     BSET    #0, D7
     
     ; The index of grid that player is on (set to 0 at start)
-    MOVE.B  #8, D6
+    CLR     D6
     
     ; Start the loop if condition satisfies
     CMPI.B  #1, D7
@@ -192,7 +192,7 @@ UPDATE:
     
     ; if something was pressed, we read the last character using Task 5 
     MOVE.L	#5, D0
-    TRAP		#15
+    TRAP	#15
     
     
     
@@ -230,6 +230,7 @@ GAME_WON:
     MOVE.B  #13, D0
     TRAP    #15
     
+    ; Display victory message
     LEA     VICTORY_MESSAGE, A1
     MOVE.B  #13, D0
     TRAP    #15
@@ -238,12 +239,13 @@ GAME_WON:
     MOVE.B  #13, D0
     TRAP    #15
     
+    ; Display restart message
     LEA     RESTART_MESSAGE, A1
     MOVE.B  #13, D0
     TRAP    #15
     
     
-    ; Clear screen on user hitting enter
+    ; Clear screen  and restart game on user hitting enter
     MOVE.B  #4, D0
     TRAP    #15
     
@@ -529,6 +531,12 @@ DISPLAY_GRID:
     MOVE.L      #$000FFF00, D1
     MOVE.B      #21, D0
     TRAP        #15
+    
+    ; Displaying grid using for loops
+    ; Outer for loop iterates through each row
+    ; Inner for loop iterates through each coloumn
+    ; First inner loop prints the respective switch value (0 or 1)
+    ; Second inner loop is for underscore below the tile player is on and space below all other tiles
      
     OUTER_LOOP:
         CMPI.B  #4, D3
@@ -711,7 +719,7 @@ UNDERSCORE      DC.B    '_',0
 
 
     ORG $7000
-; Creating a grid of 25 bytes with values set
+; Creating grids of 25 bytes with values set
 GRID_1_ROW_0    DC.B    1,0,0,0,1
 GRID_1_ROW_1    DC.B    0,1,0,1,0
 GRID_1_ROW_2    DC.B    0,0,1,0,0
@@ -724,6 +732,8 @@ GRID_2_ROW_2    DC.B    1,0,1,0,1
 GRID_2_ROW_3    DC.B    0,0,0,0,0
 GRID_2_ROW_4    DC.B    0,0,0,0,0
 
+
+; All-purpose grid which what will be worked on in code
 ROW_0           DS.B    5
 ROW_1           DS.B    5
 ROW_2           DS.B    5
@@ -736,7 +746,10 @@ ROW_4           DS.B    5
 
 * Put variables and constants here
 ENDOFPROG:
-    END    START        ; last line of source                            :)
+    END    START        ; last line of source
+
+
+
 
 
 
