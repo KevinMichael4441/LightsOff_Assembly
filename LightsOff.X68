@@ -11,20 +11,20 @@ START:                  ; first instruction of program
     
     
     ; To turn off keyboard echo
-    MOVE.B		#0, D1
-    MOVE.B		#12, d0
+    CLR		    D1
+    MOVE.B		#12, D0
 	TRAP		#15
     
     ; Setting font color
-    MOVE.L  #$000FFF00, D1
-    MOVE.B  #21, D0
-    TRAP    #15
+    MOVE.L      #$000FFF00, D1
+    MOVE.B      #21, D0
+    TRAP        #15
     
     
     
     ; Randoomly choosing the grid to play on
     ; using ime in 1/100 seconds since midnight:
-    MOVE.B  #8, D0
+    MOVE.B      #8, D0
     TRAP #15
     
     ; mask upper bits for division to happen (it needs W size)
@@ -281,7 +281,7 @@ F_WEST:
     BRA     INPUTEND
     
 MOVE_WEST:
-    SUBI.B   #1, D6
+    SUBI.B  #1, D6
     BRA     INPUTEND
    
 F_NORTH:
@@ -319,7 +319,7 @@ F_EAST:
     BRA     INPUTEND
     
 MOVE_EAST:
-    ADD.B   #1, D6
+    ADDI.B  #1, D6
     BRA     INPUTEND
     
 F_SOUTH:
@@ -334,7 +334,7 @@ F_SOUTH:
     BRA     INPUTEND
     
 MOVE_SOUTH:
-    ADD.B   #5, D6
+    ADDI.B  #5, D6
     BRA     INPUTEND
     
     
@@ -347,7 +347,7 @@ F_FLIP:
     SWAP    D1
     
     LEA     ROW_0, A2
-    ADD.W    D6, A2
+    ADD.W   D6, A2
     ; fLIP THE CURRENT ONE
     BCHG    #0,(A2)
     
@@ -493,8 +493,8 @@ DISPLAY_INPUT:
 DISPLAY_GRID:
     
     ; initialize variables for nested for loop
-    MOVE.B  #0, D3  ; ROW
-    MOVE.B  #0, D4  ; COL
+    CLR     D3  ; ROW
+    CLR     D4  ; COL
      
      
     OUTER_LOOP:
@@ -556,7 +556,7 @@ DISPLAY_GRID:
         BRA     FIRST_INNER_LOOP
         
         FIRST_INNER_LOOP_END:
-        MOVE.B  #0, D4
+        CLR     D4
         
         
         
@@ -704,6 +704,7 @@ ROW_4           DS.B    5
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source                            :)
+
 
 
 
