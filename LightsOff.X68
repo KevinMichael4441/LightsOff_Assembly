@@ -15,7 +15,8 @@ START:                  ; first instruction of program
     MOVE.B		#12, D0
 	TRAP		#15
     
-    ; Setting font color
+    ; Setting font color to green
+    CLR         D2
     MOVE.L      #$000FFF00, D1
     MOVE.B      #21, D0
     TRAP        #15
@@ -239,7 +240,25 @@ GAME_WON:
     MOVE.B  #13, D0
     TRAP    #15
     
-    BRA     ENDOFPROG
+    LEA     CARRIAGE_RETURN, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    LEA     RESTART_MESSAGE, A1
+    MOVE.B  #13, D0
+    TRAP    #15
+    
+    
+    ; Clear screen on user hitting enter
+    MOVE.B  #4, D0
+    TRAP    #15
+    
+    MOVE.W  #$FF00, D1
+    MOVE.B  #11, D0
+    TRAP    #15
+    
+    
+    BRA     START
     
     
 CHECK_GAME_WIN:
@@ -449,6 +468,13 @@ DISPLAY:
     
 DISPLAY_NAME:
     ; Display messages for input
+    
+    ; Setting font color to Blue
+    CLR         D2
+    MOVE.L      #$00FFA000, D1
+    MOVE.B      #21, D0
+    TRAP        #15
+    
     LEA     LINES, A1
     MOVE.B  #13, D0
     TRAP    #15
@@ -466,6 +492,14 @@ DISPLAY_NAME:
 
 DISPLAY_INPUT:
     ; Display messages for input
+    
+    ; Setting font color to Blue
+    CLR         D2
+    MOVE.L      #$00FFA000, D1
+    MOVE.B      #21, D0
+    TRAP        #15
+    
+    
     LEA     INPUT_MESSAGE_1, A1
     MOVE.B  #13, D0
     TRAP    #15
@@ -496,6 +530,11 @@ DISPLAY_GRID:
     CLR     D3  ; ROW
     CLR     D4  ; COL
      
+    ; Setting font color to green
+    CLR         D2
+    MOVE.L      #$000FFF00, D1
+    MOVE.B      #21, D0
+    TRAP        #15
      
     OUTER_LOOP:
         CMPI.B  #4, D3
@@ -665,6 +704,7 @@ INPUT_MESSAGE_3     DC.B    '6 to go East',0
 INPUT_MESSAGE_4     DC.B    '2 to go South',0
 INPUT_MESSAGE_5     DC.B    '5 to flip switches',0
 VICTORY_MESSAGE     DC.B    'YOU WON!!!',0
+RESTART_MESSAGE     DC.B    'YOU CAN EXIT OR HIT ENTER TO PLAY AGAIN!', 0
 
 
 LINES               DC.B    '---------------------------------------',0
@@ -704,6 +744,7 @@ ROW_4           DS.B    5
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source                            :)
+
 
 
 
