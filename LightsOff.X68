@@ -13,15 +13,7 @@ START:                  ; first instruction of program
     ; To turn off keyboard echo
     CLR		    D1
     MOVE.B		#12, D0
-	TRAP		#15
-    
-    ; Setting font color to green
-    CLR         D2
-    MOVE.L      #$000FFF00, D1
-    MOVE.B      #21, D0
-    TRAP        #15
-    
-    
+	TRAP		#15    
     
     ; Randoomly choosing the grid to play on
     ; using ime in 1/100 seconds since midnight:
@@ -48,7 +40,7 @@ START:                  ; first instruction of program
     RETURN_AFTER_DECIDING_GRID:
     
     ; D7 being 1 is the condition for the while loop to run
-    MOVE.B  #1, D7
+    BSET    #0, D7
     
     ; The index of grid that player is on (set to 0 at start)
     MOVE.B  #8, D6
@@ -63,6 +55,7 @@ START:                  ; first instruction of program
     
     
 ASSIGN_GRID_1:
+; Move to GRID_1 in memory and copy it to all-purpose location in memory
     LEA         GRID_1_ROW_0, A0
     LEA         ROW_0, A1
     
@@ -113,6 +106,7 @@ ASSIGN_GRID_1:
 
 
 ASSIGN_GRID_2:
+; Move to GRID_1 in memory and copy it to all-purpose location in memory
     LEA         GRID_2_ROW_0, A0
     LEA         ROW_0, A1
     
@@ -182,7 +176,7 @@ WHILE_LOOP:
 UPDATE:
     
     ; Input number into D1
-    MOVE.B  #1, D1
+    BSET    #0, D1
     MOVE.B  #7, D0
     TRAP    #15
     
@@ -232,7 +226,7 @@ UPDATE:
 GAME_WON:   
     BSR     DISPLAY
     
-    LEA     CARRIAGE_RETURN, A1
+    LEA     NEW_LINE, A1
     MOVE.B  #13, D0
     TRAP    #15
     
@@ -240,7 +234,7 @@ GAME_WON:
     MOVE.B  #13, D0
     TRAP    #15
     
-    LEA     CARRIAGE_RETURN, A1
+    LEA     NEW_LINE, A1
     MOVE.B  #13, D0
     TRAP    #15
     
@@ -446,13 +440,13 @@ DISPLAY:
     
     BSR DISPLAY_NAME
     
-    LEA     CARRIAGE_RETURN, A1
+    LEA     NEW_LINE, A1
     MOVE.B  #13, D0
     TRAP    #15
        
     BSR DISPLAY_GRID
     
-    LEA     CARRIAGE_RETURN, A1
+    LEA     NEW_LINE, A1
     MOVE.B  #13, D0
     TRAP    #15
     
@@ -599,7 +593,7 @@ DISPLAY_GRID:
         
         
         
-        LEA     CARRIAGE_RETURN, A1
+        LEA     NEW_LINE, A1
         MOVE.B  #13, D0
         TRAP    #15
         
@@ -627,7 +621,7 @@ DISPLAY_GRID:
         SECOND_INNER_LOOP_END:
 
         
-        LEA     CARRIAGE_RETURN, A1
+        LEA     NEW_LINE, A1
         MOVE.B  #13, D0
         TRAP    #15
         
@@ -710,9 +704,8 @@ RESTART_MESSAGE     DC.B    'YOU CAN EXIT OR HIT ENTER TO PLAY AGAIN!', 0
 LINES               DC.B    '---------------------------------------',0
 GAME_NAME           DC.B    '  LIGHTS OFF - Flip all switches to 0  ',0
 
-; Is this better than printing CR and LF seperately using Task 6?
-; Prolly not but have to testt clock cycles to confirm.
-CARRIAGE_RETURN DC.B    '',0
+
+NEW_LINE        DC.B    '',0
 SPACE           DC.B    ' ',0
 UNDERSCORE      DC.B    '_',0
 
@@ -744,6 +737,7 @@ ROW_4           DS.B    5
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source                            :)
+
 
 
 
