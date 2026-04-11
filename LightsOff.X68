@@ -173,29 +173,12 @@ WHILE_LOOP:
     BRA     WHILE_LOOP
     
     
+    
+ 
+    
 UPDATE:
     
-    ; Input number into D1
-    BSET    #0, D1
-    MOVE.B  #7, D0
-    TRAP    #15
-    
-    ; First, we put 1 into D1 to indicate that we would like to read keyboard input
-    ; Then, on running TRAP #15, it clears D1 if nothing in keyboard was pressed and
-    ; it keeps D1 as 1 if anything was pressed on keyboard.
-    
-    
-   
-    ; Then, if nothing was pressed, we Branch to end of input handling
-    CMPI.B  #0,D1
-    BEQ     INPUTEND
-    
-    ; if something was pressed, we read the last character using Task 5 
-    MOVE.L	#5, D0
-    TRAP	#15
-    
-    
-    
+    BSR TAKE_INPUT    
 
     ; Was last character 4?
     CMPI.B  #'4', D1
@@ -222,7 +205,32 @@ UPDATE:
     
     RTS 
     
+TAKE_INPUT:
+
+    ; Input number into D1
+    BSET    #0, D1
+    MOVE.B  #7, D0
+    TRAP    #15
     
+    ; First, we put 1 into D1 to indicate that we would like to read keyboard input
+    ; Then, on running TRAP #15, it clears D1 if nothing in keyboard was pressed and
+    ; it keeps D1 as 1 if anything was pressed on keyboard.
+    
+    
+   
+    ; Then, if nothing was pressed, we Branch to end of input handling
+    CMPI.B  #0,D1
+    BEQ     INPUTEND
+    
+    ; if something was pressed, we read the last character using Task 5 
+    MOVE.L	#5, D0
+    TRAP	#15
+    
+    
+    RTS
+    
+    
+
 GAME_WON:   
     BSR     DISPLAY
     
@@ -747,6 +755,7 @@ ROW_4           DS.B    5
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
 
 
 
