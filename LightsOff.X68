@@ -30,10 +30,24 @@ START:                  ; first instruction of program
     ; Now, D1 should have a value 0-9
     
     ; Branch based on said value
-    CMPI.B  #4, D1
+    ; if 8/9
+    CMPI.B  #7, D1
     BGT ASSIGN_GRID_1
     
-    BRA ASSIGN_GRID_2
+    ; if 6/7
+    CMPI.B  #5, D1
+    BGT ASSIGN_GRID_2
+    
+    ; if 4/5
+    CMPI.B  #3, D1
+    BGT ASSIGN_GRID_3
+    
+    ; if 2/3
+    CMPI.B  #1, D1
+    BGT ASSIGN_GRID_4
+    
+    ; if 0/1
+    BRA ASSIGN_GRID_5
 
 
 
@@ -47,113 +61,10 @@ START:                  ; first instruction of program
     
     ; Start the loop if condition satisfies
     CMPI.B  #1, D7
-    BEQ     WHILE_LOOP
-    
-    
-
-
-    
-    
-ASSIGN_GRID_1:
-; Move to GRID_1 in memory and copy it to all-purpose location in memory
-    LEA         GRID_1_ROW_0, A0
-    LEA         ROW_0, A1
-    
-    MOVE.B      (A0), (A1) 
-    MOVE.B      1(A0), 1(A1)
-    MOVE.B      2(A0), 2(A1)
-    MOVE.B      3(A0), 3(A1)
-    MOVE.B      4(A0), 4(A1)
-    
-    LEA         GRID_1_ROW_1, A0
-    LEA         ROW_1, A1
-    
-    MOVE.B      (A0), (A1) 
-    MOVE.B      1(A0), 1(A1)
-    MOVE.B      2(A0), 2(A1)
-    MOVE.B      3(A0), 3(A1)
-    MOVE.B      4(A0), 4(A1)
-    
-    LEA         GRID_1_ROW_2, A0
-    LEA         ROW_2, A1
-    
-    MOVE.B      (A0), (A1) 
-    MOVE.B      1(A0), 1(A1)
-    MOVE.B      2(A0), 2(A1)
-    MOVE.B      3(A0), 3(A1)
-    MOVE.B      4(A0), 4(A1)
-    
-    LEA         GRID_1_ROW_3, A0
-    LEA         ROW_3, A1
-    
-    MOVE.B      (A0), (A1) 
-    MOVE.B      1(A0), 1(A1)
-    MOVE.B      2(A0), 2(A1)
-    MOVE.B      3(A0), 3(A1)
-    MOVE.B      4(A0), 4(A1)
-    
-    LEA         GRID_1_ROW_4, A0
-    LEA         ROW_4, A1
-    
-    MOVE.B      (A0), (A1) 
-    MOVE.B      1(A0), 1(A1)
-    MOVE.B      2(A0), 2(A1)
-    MOVE.B      3(A0), 3(A1)
-    MOVE.B      4(A0), 4(A1)
-    
-    BRA         RETURN_AFTER_DECIDING_GRID
+    BEQ     WHILE_LOOP 
     
 
 
-ASSIGN_GRID_2:
-; Move to GRID_1 in memory and copy it to all-purpose location in memory
-    LEA         GRID_2_ROW_0, A0
-    LEA         ROW_0, A1
-    
-    MOVE.B      (A0), (A1) 
-    MOVE.B      1(A0), 1(A1)
-    MOVE.B      2(A0), 2(A1)
-    MOVE.B      3(A0), 3(A1)
-    MOVE.B      4(A0), 4(A1)
-    
-    LEA         GRID_2_ROW_1, A0
-    LEA         ROW_1, A1
-    
-    MOVE.B      (A0), (A1) 
-    MOVE.B      1(A0), 1(A1)
-    MOVE.B      2(A0), 2(A1)
-    MOVE.B      3(A0), 3(A1)
-    MOVE.B      4(A0), 4(A1)
-    
-    LEA         GRID_2_ROW_2, A0
-    LEA         ROW_2, A1
-    
-    MOVE.B      (A0), (A1) 
-    MOVE.B      1(A0), 1(A1)
-    MOVE.B      2(A0), 2(A1)
-    MOVE.B      3(A0), 3(A1)
-    MOVE.B      4(A0), 4(A1)
-    
-    LEA         GRID_2_ROW_3, A0
-    LEA         ROW_3, A1
-    
-    MOVE.B      (A0), (A1) 
-    MOVE.B      1(A0), 1(A1)
-    MOVE.B      2(A0), 2(A1)
-    MOVE.B      3(A0), 3(A1)
-    MOVE.B      4(A0), 4(A1)
-    
-    LEA         GRID_2_ROW_4, A0
-    LEA         ROW_4, A1
-    
-    MOVE.B      (A0), (A1) 
-    MOVE.B      1(A0), 1(A1)
-    MOVE.B      2(A0), 2(A1)
-    MOVE.B      3(A0), 3(A1)
-    MOVE.B      4(A0), 4(A1)
-    
-    
-    BRA     RETURN_AFTER_DECIDING_GRID
     
 
 WHILE_LOOP:
@@ -700,6 +611,269 @@ LOAD_ROW_4:
     LEA     ROW_4, A2
     BRA     RETURN_AFTER_LOADING_ROW
     
+    
+    
+    
+ASSIGN_GRID_1:
+; Move to GRID_1 in memory and copy it to all-purpose location in memory
+    LEA         GRID_1_ROW_0, A0
+    LEA         ROW_0, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_1_ROW_1, A0
+    LEA         ROW_1, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_1_ROW_2, A0
+    LEA         ROW_2, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_1_ROW_3, A0
+    LEA         ROW_3, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_1_ROW_4, A0
+    LEA         ROW_4, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    BRA         RETURN_AFTER_DECIDING_GRID
+    
+
+
+ASSIGN_GRID_2:
+; Move to GRID_1 in memory and copy it to all-purpose location in memory
+    LEA         GRID_2_ROW_0, A0
+    LEA         ROW_0, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_2_ROW_1, A0
+    LEA         ROW_1, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_2_ROW_2, A0
+    LEA         ROW_2, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_2_ROW_3, A0
+    LEA         ROW_3, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_2_ROW_4, A0
+    LEA         ROW_4, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    
+    BRA     RETURN_AFTER_DECIDING_GRID
+    
+
+    
+    
+ASSIGN_GRID_3:
+; Move to GRID_1 in memory and copy it to all-purpose location in memory
+    LEA         GRID_3_ROW_0, A0
+    LEA         ROW_0, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_3_ROW_1, A0
+    LEA         ROW_1, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_3_ROW_2, A0
+    LEA         ROW_2, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_3_ROW_3, A0
+    LEA         ROW_3, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_3_ROW_4, A0
+    LEA         ROW_4, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    BRA         RETURN_AFTER_DECIDING_GRID
+
+
+
+    
+    
+ASSIGN_GRID_4:
+; Move to GRID_1 in memory and copy it to all-purpose location in memory
+    LEA         GRID_4_ROW_0, A0
+    LEA         ROW_0, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_4_ROW_1, A0
+    LEA         ROW_1, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_4_ROW_2, A0
+    LEA         ROW_2, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_4_ROW_3, A0
+    LEA         ROW_3, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_4_ROW_4, A0
+    LEA         ROW_4, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    BRA         RETURN_AFTER_DECIDING_GRID
+
+
+
+    
+    
+ASSIGN_GRID_5:
+; Move to GRID_1 in memory and copy it to all-purpose location in memory
+    LEA         GRID_5_ROW_0, A0
+    LEA         ROW_0, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_5_ROW_1, A0
+    LEA         ROW_1, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_5_ROW_2, A0
+    LEA         ROW_2, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_5_ROW_3, A0
+    LEA         ROW_3, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    LEA         GRID_5_ROW_4, A0
+    LEA         ROW_4, A1
+    
+    MOVE.B      (A0), (A1) 
+    MOVE.B      1(A0), 1(A1)
+    MOVE.B      2(A0), 2(A1)
+    MOVE.B      3(A0), 3(A1)
+    MOVE.B      4(A0), 4(A1)
+    
+    BRA         RETURN_AFTER_DECIDING_GRID
+
+    
 
     ORG $8000
 INPUT_MESSAGE_1     DC.B    '4 to go West ',0
@@ -728,14 +902,33 @@ GRID_1_ROW_2    DC.B    0,0,1,0,0
 GRID_1_ROW_3    DC.B    0,1,0,1,0
 GRID_1_ROW_4    DC.B    1,0,0,0,1 
 
-GRID_2_ROW_0    DC.B    0,0,0,0,0
-GRID_2_ROW_1    DC.B    0,0,0,0,0
-GRID_2_ROW_2    DC.B    1,0,1,0,1
-GRID_2_ROW_3    DC.B    0,0,0,0,0
-GRID_2_ROW_4    DC.B    0,0,0,0,0
+GRID_2_ROW_0    DC.B    1,1,1,1,0
+GRID_2_ROW_1    DC.B    1,0,0,0,1
+GRID_2_ROW_2    DC.B    1,0,0,0,1
+GRID_2_ROW_3    DC.B    1,0,0,0,1
+GRID_2_ROW_4    DC.B    1,1,1,1,0
 
 
-; All-purpose grid which what will be worked on in code
+GRID_3_ROW_0    DC.B    1,0,1,0,1
+GRID_3_ROW_1    DC.B    1,0,1,0,1
+GRID_3_ROW_2    DC.B    0,0,0,0,0
+GRID_3_ROW_3    DC.B    1,0,1,0,1
+GRID_3_ROW_4    DC.B    1,0,1,0,1   
+
+GRID_4_ROW_0    DC.B    0,0,0,0,0
+GRID_4_ROW_1    DC.B    1,1,0,1,1
+GRID_4_ROW_2    DC.B    0,0,0,0,0
+GRID_4_ROW_3    DC.B    1,0,0,0,1
+GRID_4_ROW_4    DC.B    1,1,0,1,1   
+
+GRID_5_ROW_0    DC.B    0,0,0,0,0
+GRID_5_ROW_1    DC.B    0,0,0,0,0
+GRID_5_ROW_2    DC.B    1,0,1,0,1
+GRID_5_ROW_3    DC.B    1,0,1,0,1
+GRID_5_ROW_4    DC.B    0,1,1,1,0   
+
+
+; All-purpose grid which is what will be worked on in code
 ROW_0           DS.B    5
 ROW_1           DS.B    5
 ROW_2           DS.B    5
@@ -749,6 +942,8 @@ ROW_4           DS.B    5
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
+
 
 
 
