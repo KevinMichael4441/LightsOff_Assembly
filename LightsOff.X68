@@ -159,7 +159,7 @@ ASSIGN_GRID_2:
 WHILE_LOOP:
     ; Is loop condition true?
     TST.B   D7
-    BEQ     ENDOFPROG
+    BEQ     START
     
     
     ; Sub-Routine to Display on screen
@@ -216,12 +216,6 @@ TAKE_INPUT:
     ; Then, on running TRAP #15, it clears D1 if nothing in keyboard was pressed and
     ; it keeps D1 as 1 if anything was pressed on keyboard.
     
-    
-   
-    ; Then, if nothing was pressed, we Branch to end of input handling
-    CMPI.B  #0,D1
-    BEQ     INPUTEND
-    
     ; if something was pressed, we read the last character using Task 5 
     MOVE.L	#5, D0
     TRAP	#15
@@ -261,8 +255,8 @@ GAME_WON:
     MOVE.B  #11, D0
     TRAP    #15
     
-    
-    BRA     START
+    CLR     D7
+    RTS
     
     
 CHECK_GAME_WIN:
@@ -755,6 +749,8 @@ ROW_4           DS.B    5
 * Put variables and constants here
 ENDOFPROG:
     END    START        ; last line of source
+
+
 
 
 
