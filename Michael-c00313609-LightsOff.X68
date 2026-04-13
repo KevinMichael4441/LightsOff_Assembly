@@ -18,24 +18,44 @@ START:                  ; first instruction of program
     MOVE.L      (SP)+, D1
     
     ; Branch based on said value
-    ; if 8/9
-    CMPI.B  #7, D1
-    BGT ASSIGN_GRID_1
+    ; if 0
+    CMPI.B  #0, D1
+    BEQ ASSIGN_GRID_0
     
-    ; if 6/7
-    CMPI.B  #5, D1
-    BGT ASSIGN_GRID_2
-    
-    ; if 4/5
-    CMPI.B  #3, D1
-    BGT ASSIGN_GRID_3
-    
-    ; if 2/3
+    ; if 1
     CMPI.B  #1, D1
-    BGT ASSIGN_GRID_4
+    BEQ ASSIGN_GRID_1
     
-    ; if 0/1
-    BRA ASSIGN_GRID_5
+    ; if 2
+    CMPI.B  #2, D1
+    BEQ ASSIGN_GRID_2
+    
+    ; if 3
+    CMPI.B  #3, D1
+    BEQ ASSIGN_GRID_3
+    
+    ; if 4
+    CMPI.B  #4, D1
+    BEQ ASSIGN_GRID_4
+    
+    ; if 5
+    CMPI.B  #5, D1
+    BEQ ASSIGN_GRID_5
+    
+    ; if 6
+    CMPI.B  #6, D1
+    BEQ ASSIGN_GRID_6
+    
+    ; if 7
+    CMPI.B  #7, D1
+    BEQ ASSIGN_GRID_7
+    
+    ; if 8
+    CMPI.B  #8, D1
+    BEQ ASSIGN_GRID_8
+    
+    BRA ASSIGN_GRID_9
+    
 
     RETURN_AFTER_DECIDING_GRID:
     
@@ -638,7 +658,11 @@ LOAD_ROW_4:
     
     
     
-    
+ASSIGN_GRID_0:
+; Move to GRID_1 in memory and copy it to all-purpose location in memory
+    LEA         GRID_0_ROW_0, A0
+    MOVE.L      A0, -(SP)
+    BRA         RETURN_AFTER_DECIDING_GRID    
 ASSIGN_GRID_1:
 ; Move to GRID_1 in memory and copy it to all-purpose location in memory
     LEA         GRID_1_ROW_0, A0
@@ -664,6 +688,27 @@ ASSIGN_GRID_5:
     LEA         GRID_5_ROW_0, A0
     MOVE.L      A0, -(SP)
     BRA         RETURN_AFTER_DECIDING_GRID
+ASSIGN_GRID_6:
+; Move to GRID_6 in memory and copy it to all-purpose location in memory
+    LEA         GRID_6_ROW_0, A0
+    MOVE.L      A0, -(SP)
+    BRA         RETURN_AFTER_DECIDING_GRID
+ASSIGN_GRID_7:
+; Move to GRID_7 in memory and copy it to all-purpose location in memory
+    LEA         GRID_7_ROW_0, A0
+    MOVE.L      A0, -(SP)
+    BRA         RETURN_AFTER_DECIDING_GRID
+ASSIGN_GRID_8:
+; Move to GRID_8 in memory and copy it to all-purpose location in memory
+    LEA         GRID_8_ROW_0, A0
+    MOVE.L      A0, -(SP)
+    BRA         RETURN_AFTER_DECIDING_GRID
+ASSIGN_GRID_9:
+; Move to GRID_9 in memory and copy it to all-purpose location in memory
+    LEA         GRID_9_ROW_0, A0
+    MOVE.L      A0, -(SP)
+    BRA         RETURN_AFTER_DECIDING_GRID
+
     
     
     
@@ -731,6 +776,12 @@ UNDERSCORE      DC.B    '_',0
 
     ORG $7000
 ; Creating grids of 25 bytes with values set
+GRID_0_ROW_0    DC.B    0,1,1,1,0
+GRID_0_ROW_1    DC.B    0,0,0,0,0
+GRID_0_ROW_2    DC.B    1,0,0,0,1
+GRID_0_ROW_3    DC.B    1,0,0,0,0
+GRID_0_ROW_4    DC.B    0,0,0,0,0 
+
 GRID_1_ROW_0    DC.B    1,0,0,0,1
 GRID_1_ROW_1    DC.B    0,1,0,1,0
 GRID_1_ROW_2    DC.B    0,0,1,0,0
@@ -742,7 +793,6 @@ GRID_2_ROW_1    DC.B    1,0,0,0,1
 GRID_2_ROW_2    DC.B    1,0,0,0,1
 GRID_2_ROW_3    DC.B    1,0,0,0,1
 GRID_2_ROW_4    DC.B    1,1,1,1,0
-
 
 GRID_3_ROW_0    DC.B    1,0,1,0,1
 GRID_3_ROW_1    DC.B    1,0,1,0,1
@@ -762,7 +812,32 @@ GRID_5_ROW_2    DC.B    1,0,1,0,1
 GRID_5_ROW_3    DC.B    1,0,1,0,1
 GRID_5_ROW_4    DC.B    0,1,1,1,0   
 
+GRID_6_ROW_0    DC.B    0,1,0,1,0
+GRID_6_ROW_1    DC.B    1,1,0,1,1
+GRID_6_ROW_2    DC.B    1,1,0,1,1
+GRID_6_ROW_3    DC.B    1,1,0,1,1
+GRID_6_ROW_4    DC.B    0,1,0,1,0   
 
+GRID_7_ROW_0    DC.B    0,0,0,0,0
+GRID_7_ROW_1    DC.B    0,0,1,0,0
+GRID_7_ROW_2    DC.B    0,1,0,1,0
+GRID_7_ROW_3    DC.B    1,0,1,0,1
+GRID_7_ROW_4    DC.B    0,1,0,1,0   
+
+GRID_8_ROW_0    DC.B    0,1,1,1,0
+GRID_8_ROW_1    DC.B    0,1,1,1,0
+GRID_8_ROW_2    DC.B    0,1,1,1,0
+GRID_8_ROW_3    DC.B    0,0,0,0,0
+GRID_8_ROW_4    DC.B    0,0,0,0,0   
+
+
+GRID_9_ROW_0    DC.B    0,0,0,1,0
+GRID_9_ROW_1    DC.B    0,0,1,0,1
+GRID_9_ROW_2    DC.B    0,1,0,1,0
+GRID_9_ROW_3    DC.B    1,0,1,0,0
+GRID_9_ROW_4    DC.B    0,1,0,0,0   
+
+    ORG $7500
 ; All-purpose grid which is what will be worked on in code
 ROW_0           DS.B    5
 ROW_1           DS.B    5
@@ -808,6 +883,7 @@ ENDOFPROG:
 
 
 E
+
 *~Font name~Courier New~
 *~Font size~10~
 *~Tab type~1~
