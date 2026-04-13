@@ -8,7 +8,11 @@
 START:                  ; first instruction of program
 
 * Put program code here
-    
+
+;----------------------------------------------------------
+; Initializing settings and randomly choosing grid
+;----------------------------------------------------------    
+ 
     ;Subroutine to turn off keyboard echo
     BSR TURN_OFF_KEYBOARD_ECHO
     
@@ -73,6 +77,9 @@ START:                  ; first instruction of program
     BEQ     WHILE_LOOP 
   
 
+;----------------------------------------------------------
+; Subroutine to return a random digit (0-9) onto the stack
+;---------------------------------------------------------- 
 RANDOM_DIGIT:
     ; Randoomly generating 0-9
     ; using time in 1/100 seconds since midnight:
@@ -95,6 +102,9 @@ RANDOM_DIGIT:
     RTS
 
 
+;----------------------------------------------------------
+; Subroutine to turn off keyboard echo when inputting
+;---------------------------------------------------------- 
 TURN_OFF_KEYBOARD_ECHO:
     ; To turn off keyboard echo
     CLR		    D1
@@ -104,6 +114,9 @@ TURN_OFF_KEYBOARD_ECHO:
 	RTS
     
 
+;--------------------------------------------------------------
+; Main body of the program Loops through draw and update calls
+;--------------------------------------------------------------
 WHILE_LOOP:
     ; Is loop condition true?
     TST.B   D7
@@ -123,7 +136,9 @@ WHILE_LOOP:
     
     
  
-    
+;------------------------------------------------
+; Takes input and updates game world with input
+;------------------------------------------------
 UPDATE:
     
     BSR TAKE_INPUT    
@@ -152,7 +167,12 @@ UPDATE:
     INPUTEND:
     
     RTS 
-    
+  
+
+;-----------------------------------------
+; Read input from user using the Trap #15 
+; (only if user actually inputs anything)
+;----------------------------------------- 
 TAKE_INPUT:
 
     ; Input number into D1
@@ -172,7 +192,9 @@ TAKE_INPUT:
     RTS
     
     
-
+;---------------------------------
+; Code chunk that runs on game win
+;---------------------------------
 GAME_WON:   
     BSR     DISPLAY
     
@@ -196,7 +218,11 @@ GAME_WON:
     ; Game won so while loop over => clear D7 (which being 1 was loop condition)
     CLR     D7
     RTS
-    
+
+
+;------------------------------------------------------------
+; Code chunk that displays appropriate message after winning
+;------------------------------------------------------------
 DISPLAY_WIN_MESSAGES:
     ; Display victory message
     LEA     VICTORY_MESSAGE, A1
@@ -215,6 +241,10 @@ DISPLAY_WIN_MESSAGES:
     RTS
 
 
+
+;------------------------------------------------------------------------
+; For loop that iterates through each grid tile to see if any are active
+;------------------------------------------------------------------------
 CHECK_GAME_WIN:
     TST.B   D0
     BEQ     GAME_WON
@@ -232,12 +262,18 @@ CHECK_GAME_WIN:
     BRA     CHECK_GAME_WIN
     
 
+;---------------------------------------------------------
+; To branch back to inputend if win condition is not true
+;---------------------------------------------------------
 CONTINUE_PLAYING:
     MOVE.B  #1, D7
     
     BRA     INPUTEND
     
 
+;------------------------------------------------------------------------
+; Checks if WEST movement is valid and then moves there
+;------------------------------------------------------------------------
 F_WEST:
 
     MOVE.L  D6, D2
@@ -252,11 +288,17 @@ F_WEST:
     BNE     MOVE_WEST
     
     BRA     INPUTEND
-    
+
+;------------------------
+; Actually 'moving' WEST
+;------------------------   
 MOVE_WEST:
     SUBI.B  #1, D6
     BRA     INPUTEND
-   
+
+;------------------------------------------------------------------------
+; Checks if NORTH movement is valid and then moves there
+;------------------------------------------------------------------------   
 F_NORTH:
     MOVE.L  D6, D2
     
@@ -269,11 +311,18 @@ F_NORTH:
     BNE     MOVE_NORTH
     
     BRA     INPUTEND
-    
+
+;------------------------
+; Actually 'moving' NORTH
+;------------------------   
 MOVE_NORTH:
     SUBI.B   #5, D6
     BRA     INPUTEND
     
+    
+;------------------------------------------------------------------------
+; Checks if EAST movement is valid and then moves there
+;------------------------------------------------------------------------
 F_EAST:
 
     MOVE.L  D6, D2
@@ -291,10 +340,19 @@ F_EAST:
     
     BRA     INPUTEND
     
+    
+;------------------------
+; Actually 'moving' EAST
+;------------------------   
 MOVE_EAST:
     ADDI.B  #1, D6
     BRA     INPUTEND
     
+    
+    
+;------------------------------------------------------------------------
+; Checks if SOUTH movement is valid and then moves there
+;------------------------------------------------------------------------
 F_SOUTH:
     MOVE.L  D6, D2
     DIVU    #5, D2
@@ -306,12 +364,18 @@ F_SOUTH:
     
     BRA     INPUTEND
     
+    
+;------------------------
+; Actually 'moving' SOUTH
+;------------------------   
 MOVE_SOUTH:
     ADDI.B  #5, D6
     BRA     INPUTEND
     
     
-    
+;--------------------------------------------------------------------------------------
+; Flip the current tile player is and then flips valid tiles (those not out of bounds)
+;--------------------------------------------------------------------------------------
 F_FLIP:
     ; D0 will have quotient (row) and D1 will have remainder (col)
     MOVE.L  D6, D0
@@ -354,7 +418,9 @@ F_FLIP:
 
     BRA     INPUTEND
 
-
+;------------------------------------------
+; Flip the tile WEST of the tile player on
+;------------------------------------------
 FLIP_WEST:
     LEA     ROW_0, A2
     ADD.W   D6, A2
@@ -363,6 +429,10 @@ FLIP_WEST:
 
     BRA THREE_FLIP_LEFT
     
+    
+;------------------------------------------
+; Flip the tile NORTH of the tile player on
+;------------------------------------------
 FLIP_NORTH:
     LEA     ROW_0, A2
     ADD.W   D6, A2
@@ -370,7 +440,11 @@ FLIP_NORTH:
     BCHG    #0, (A2)
     
     BRA TWO_FLIP_LEFT
-    
+ 
+
+;------------------------------------------
+; Flip the tile EAST of the tile player on
+;------------------------------------------   
 FLIP_EAST:
     LEA     ROW_0, A2
     ADD.W   D6, A2
@@ -378,7 +452,11 @@ FLIP_EAST:
     BCHG    #0, (A2)
     
     BRA ONE_FLIP_LEFT
-    
+
+
+;------------------------------------------
+; Flip the tile SOUTH of the tile player on
+;------------------------------------------    
 FLIP_SOUTH:
     LEA     ROW_0, A2
     ADD.W   D6, A2
@@ -388,7 +466,9 @@ FLIP_SOUTH:
     BRA NO_FLIP_LEFT
     
        
-    
+;------------------------------------------
+; Displays everything seen on screen
+;------------------------------------------   
 DISPLAY:
     ; Do all displays
     
@@ -419,7 +499,9 @@ DISPLAY:
     
     
     
-    
+;-----------------------------------------------------------------
+; Displays name of the game with one line introduction in a banner
+;-----------------------------------------------------------------
 DISPLAY_NAME:
     ; Display messages for input
     
@@ -443,7 +525,9 @@ DISPLAY_NAME:
     
     RTS
 
-
+;----------------------------------------
+; Displays instructinos for player input
+;----------------------------------------
 DISPLAY_INPUT:
     ; Display messages for input
     
@@ -477,7 +561,9 @@ DISPLAY_INPUT:
     RTS
     
     
-    
+;---------------------------------------------------
+; Displays the grid aka game world in all its glory
+;---------------------------------------------------    
 DISPLAY_GRID:
     
     ; initialize variables for nested for loop
@@ -599,7 +685,10 @@ DISPLAY_GRID:
     OUTER_LOOP_END:
         RTS
   
-  
+ 
+;---------------------------
+; Print an underscore - "_"
+;---------------------------- 
 PRINT_UNDERSCORE:
     LEA     UNDERSCORE, A1
     MOVE.B  #14, D0
@@ -611,6 +700,10 @@ PRINT_UNDERSCORE:
     
     BRA     CONTINUE_SECOND_INNER_LOOP
     
+    
+;----------------------
+; Print a space - " "
+;---------------------- 
 PRINT_SPACE:
     LEA     SPACE, A1
     MOVE.B  #14, D0
@@ -623,7 +716,9 @@ PRINT_SPACE:
     BRA     CONTINUE_SECOND_INNER_LOOP
   
   
-  
+;---------------------------
+; Load respective coloumns
+;---------------------------  
 LOAD_COL_0:
     LEA     (A2),A2
     BRA     RETURN_AFTER_LOADING_COL
@@ -639,7 +734,10 @@ LOAD_COL_3:
 LOAD_COL_4:
     LEA     4(A2),A2
     BRA     RETURN_AFTER_LOADING_COL
-    
+
+;---------------------------
+; Load respective rows
+;---------------------------     
 LOAD_ROW_0:
     LEA     ROW_0, A2
     BRA     RETURN_AFTER_LOADING_ROW
@@ -657,7 +755,9 @@ LOAD_ROW_4:
     BRA     RETURN_AFTER_LOADING_ROW
     
     
-    
+;-----------------
+; Assign grids
+;-----------------    
 ASSIGN_GRID_0:
 ; Move to GRID_1 in memory and copy it to all-purpose location in memory
     LEA         GRID_0_ROW_0, A0
@@ -711,7 +811,10 @@ ASSIGN_GRID_9:
 
     
     
-    
+;---------------------------------------------------
+; Subroutine that takes the apecific grid's address
+; and copies it to where game can use
+;---------------------------------------------------
 ASSIGN_GRID:
     ; Function that takes the address of a specifc grid 
     ; and copies it into the all purpose grid
@@ -883,6 +986,7 @@ ENDOFPROG:
 
 
 E
+
 
 *~Font name~Courier New~
 *~Font size~10~
