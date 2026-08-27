@@ -1,6 +1,6 @@
 # My rendition of the game 'Lights Out' in 68K Assembly
 
-- Made with the help of EASy68K. EASy68K is a 68000 Structured Assembly Language IDE. 
+- Made with the help of EASy68K as part of my Assembly Programming module. EASy68K is a 68000 Structured Assembly Language IDE. 
 - The original game:
 https://en.wikipedia.org/wiki/Lights_Out_(game)
 
